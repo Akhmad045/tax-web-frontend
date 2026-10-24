@@ -55,15 +55,6 @@ export default function Dashboard() {
           </Link>
         ))}
       </div>
-
-      <Card title="Cara pakai" subtitle="Langkah singkat menggunakan aplikasi">
-        <ol className="ml-4 list-decimal space-y-1.5 text-sm text-slate-600">
-          <li>Pastikan backend FastAPI berjalan di <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs">http://localhost:8000</code>.</li>
-          <li>Pilih modul pajak yang ingin dihitung.</li>
-          <li>Isi form, klik tombol hitung, lalu lihat detail hasilnya.</li>
-          <li>Klik <strong>Simpan Data</strong> agar hasil tersimpan dan muncul di halaman <Link to="/riwayat" className="font-medium text-blue-600 hover:underline">Riwayat</Link>.</li>
-        </ol>
-      </Card>
     </div>
   )
 }

@@ -17,11 +17,13 @@ export default function Layout({ children }) {
       <header className="bg-blue-700 shadow-lg">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-4 md:flex-row md:items-center md:justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-lg font-bold text-blue-700 shadow">
-              ₨
-            </span>
+            <img
+              src="/mu-logo.png"
+              alt="MU Logo"
+              className="h-9 w-9 object-contain"
+            />
             <span className="text-lg font-semibold text-white">
-              Kalkulator Pajak
+              Tim 3 Kalkulator Pajak
             </span>
           </Link>
 
