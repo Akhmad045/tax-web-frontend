@@ -8,7 +8,7 @@
  * mengetik emailnya sendiri.
  */
 import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import api from './api/client'
 import {
   ambilEmailProses,
@@ -276,13 +276,6 @@ export default function VerifyOTP() {
                 : 'Kirim Ulang Kode'}
           </button>
         </form>
-
-        <p className="mt-6 text-center text-sm text-slate-500">
-          Belum menerima kode?{' '}
-          <Link to="/register" className="font-semibold text-blue-700 hover:underline">
-            Daftar ulang
-          </Link>
-        </p>
       </div>
     </div>
   )
