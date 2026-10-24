@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 import Login from './Login'
 import Register from './Register'
@@ -14,11 +14,12 @@ import PPhBadan from './pages/PPhBadan'
 import RiwayatData from './pages/RiwayatData'
 
 /**
- * Baca token langsung dari localStorage.
+ * Baca token langsung dari localStorage (jaring pengaman terakhir).
  *
- * Sumber utama guard: keberadaan token di localStorage. Nilai kosong,
- * spasi, atau string "null"/"undefined" dianggap TIDAK login — supaya
- * sisa data rusak tidak membuka halaman terlarang.
+ * Sumber utama status login adalah AuthContext, yang sudah terisi sejak
+ * render pertama. Helper ini hanya dipakai untuk kasus tepi: nilai kosong,
+ * spasi, atau sisa string "null"/"undefined" dari versi lama dianggap TIDAK
+ * login — supaya data rusak tidak membuka halaman terlarang.
  */
 const KEY_TOKEN = 'access_token'
 
@@ -37,28 +38,26 @@ function adaToken() {
 /**
  * Auth Guard: bungkus route yang wajib login.
  *
- * Dua lapis pengecekan:
- *   1. `adaToken()` langsung ke localStorage (sumber utama, sinkron).
- *   2. `isLoggedIn` dari AuthContext (jaring pengaman bila token dihapus
- *      di tempat lain tanpa reload).
+ * Membaca `token` dari AuthContext, yang sejak render pertama SUDAH terisi
+ * dari localStorage (lihat `useState(bacaSesi)` di AuthContext). Karena
+ * inisialisasi itu sinkron, guard tidak pernah melihat kondisi "guest palsu"
+ * pada refresh / pindah tab — penyebab user ter-logout sendiri.
  *
  * Guest langsung diarahkan ke /login secara sinkron — komponen anak TIDAK
  * pernah dirender, jadi isi halaman tidak sempat terlihat. `replace` dipakai
  * agar tombol Back tidak kembali ke halaman terlarang.
- *
- * Catatan: effect di bawah menangani kasus token kedaluwarsa/diubah dari tab
- * lain. Bila token hilang setelah render pertama, guard mengarahkan ulang.
  */
 function ProtectedRoute({ children }) {
-  const { isLoggedIn, logout } = useAuth()
+  const { token, isLoggedIn, sinkronkanSesi } = useAuth()
   const location = useLocation()
-  const punyaToken = adaToken()
 
   useEffect(() => {
-    if (!punyaToken && isLoggedIn) logout()
-  }, [punyaToken, isLoggedIn, logout])
+    // Pastikan state tidak basi bila token hilang dari luar React
+    // (logout di tab lain, sesi dibersihkan interceptor 401).
+    sinkronkanSesi()
+  }, [sinkronkanSesi])
 
-  if (!punyaToken || !isLoggedIn) {
+  if (!token || !isLoggedIn) {
     return (
       <Navigate
         to="/login"
@@ -120,43 +119,40 @@ function NotFound() {
 }
 
 /**
- * Memantau token di localStorage selama aplikasi hidup.
+ * Memantau token di localStorage selama aplikasi hidup — TANPA reload paksa.
  *
- * Skenario yang ditangani: user logout di tab lain (atau dev menghapus token
- * lewat DevTools) sehingga halaman yang sedang terbuka masih memegang state
- * login. Begitu token hilang, lakukan reload penuh ke /login agar tidak ada
- * sisa isi halaman terlindungi di layar.
+ * Skenario: user logout di tab lain (atau token dibersihkan interceptor 401).
+ * AuthContext sudah menyinkronkan state lewat listener `storage`/`focus`, jadi
+ * di sini cukup memastikan halaman privat yang sedang terbuka dilepas dengan
+ * navigasi SPA (bukan `window.location.replace`) — reload paksa itulah yang
+ * dulu membuat sesi seolah hilang dan bisa memicu loop tak perlu.
+ *
+ * Halaman publik (login/register/reset) tidak disentuh.
  */
 function PemantauToken() {
+  const { token } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+
   useEffect(() => {
-    const periksa = () => {
-      if (!adaToken()) {
-        // Reload penuh membuang seluruh state React (termasuk data sensitif).
-        if (window.location.pathname !== '/login') {
-          window.location.replace('/login')
-        }
+    if (token) return // masih login, tidak ada yang perlu dilakukan
+    if (!adaToken()) {
+      const publik = [
+        '/login',
+        '/register',
+        '/verify-otp',
+        '/forgot-password',
+        '/reset-password',
+        '/',
+      ]
+      if (!publik.includes(location.pathname)) {
+        navigate('/login', {
+          replace: true,
+          state: { from: location.pathname + location.search },
+        })
       }
     }
-
-    // Tab lain mengubah localStorage.
-    const onStorage = (e) => {
-      if (!e.key || e.key === KEY_TOKEN) periksa()
-    }
-    // Kembali ke tab ini: cek ulang karena storage bisa berubah saat tidak aktif.
-    const onVisible = () => {
-      if (document.visibilityState === 'visible') periksa()
-    }
-
-    window.addEventListener('storage', onStorage)
-    document.addEventListener('visibilitychange', onVisible)
-    // Cek sekali saat mount/refresh.
-    periksa()
-
-    return () => {
-      window.removeEventListener('storage', onStorage)
-      document.removeEventListener('visibilitychange', onVisible)
-    }
-  }, [])
+  }, [token, navigate, location.pathname, location.search])
 
   return null
 }
