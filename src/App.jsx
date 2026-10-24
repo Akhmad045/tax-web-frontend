@@ -13,17 +13,44 @@ import PPhBadan from './pages/PPhBadan'
 import RiwayatData from './pages/RiwayatData'
 
 /**
- * Bungkus route yang wajib login.
+ * Baca token langsung dari localStorage.
  *
- * Belum login -> /login (dengan `state.from` agar bisa kembali ke halaman
- * asal setelah berhasil masuk).
+ * Sengaja tidak hanya mengandalkan state React: dengan begitu pengecekan
+ * tetap benar walau context belum ter-sync (mis. tab lain sudah logout dan
+ * mengubah localStorage).
+ */
+function adaToken() {
+  try {
+    return Boolean(localStorage.getItem('access_token'))
+  } catch {
+    // Storage diblokir (mode privat) -> diperlakukan sebagai guest.
+    return false
+  }
+}
+
+/**
+ * Auth Guard: bungkus route yang wajib login.
+ *
+ * Dua lapis pengecekan:
+ *   1. `isLoggedIn` dari AuthContext (sumber kebenaran aplikasi).
+ *   2. `adaToken()` langsung ke localStorage (jaring pengaman).
+ *
+ * Guest langsung diarahkan ke /login secara sinkron — komponen anak TIDAK
+ * pernah dirender, jadi isi halaman tidak sempat terlihat. `replace` dipakai
+ * agar tombol Back tidak kembali ke halaman terlarang.
  */
 function ProtectedRoute({ children }) {
   const { isLoggedIn } = useAuth()
   const location = useLocation()
 
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  if (!isLoggedIn || !adaToken()) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location.pathname + location.search }}
+      />
+    )
   }
   return children
 }

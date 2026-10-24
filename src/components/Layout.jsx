@@ -32,11 +32,23 @@ export default function Layout({ children }) {
   const tampilNav = navItems.filter((item) => !item.adminOnly || isAdmin)
 
   const handleLogout = () => {
-    // Pindah ke Dashboard secara penuh (bukan navigasi SPA). Ini mencegah
-    // ProtectedRoute sempat merender dan melempar ke /login saat token
-    // dihapus dari halaman yang dilindungi seperti /riwayat.
+    // 1) Hapus sesi lewat AuthContext (membersihkan token, role, username).
     logout()
-    if (typeof window !== 'undefined') window.location.assign('/')
+
+    // 2) Hapus langsung dari localStorage sebagai jaring pengaman, bila
+    //    storage sempat diblokir atau context belum ter-sync.
+    try {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('role')
+      localStorage.removeItem('username')
+    } catch {
+      // abaikan
+    }
+
+    // 3) Redirect penuh ke /login. Navigasi penuh (bukan SPA) memastikan
+    //    semua state React dibuang sehingga isi halaman terlindungi tidak
+    //    tersisa di memori/layar.
+    if (typeof window !== 'undefined') window.location.assign('/login')
   }
 
   return (
@@ -81,9 +93,10 @@ export default function Layout({ children }) {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="rounded-lg border border-blue-300/60 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-600"
+                  title="Keluar dari akun"
+                  className="rounded-lg border border-red-300 bg-transparent px-3 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-600 hover:text-white hover:border-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
                 >
-                  Keluar
+                  Logout
                 </button>
               </div>
             ) : (
