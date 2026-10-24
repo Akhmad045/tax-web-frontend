@@ -5,6 +5,7 @@
  * (tabel riwayat di backend) + filter per modul, lihat detail, dan hapus.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Card from '../components/Card'
 import { formatRupiah } from '../utils/format'
 import {
@@ -39,6 +40,7 @@ const WARNA_MODUL = {
 }
 
 export default function RiwayatData() {
+  const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -54,15 +56,26 @@ export default function RiwayatData() {
       const data = await ambilRiwayat({ limit: 100 })
       setItems(data.items || [])
     } catch (err) {
-      setError(
-        err.response
-          ? `Gagal mengambil riwayat (status ${err.response.status}).`
-          : 'Tidak dapat terhubung ke backend. Pastikan FastAPI berjalan.',
-      )
+      const status = err.response?.status
+      if (status === 401) {
+        // Token tidak ada / kedaluwarsa. Interceptor axios sudah membersihkan
+        // sesi; pindah ke login dan simpan halaman asal.
+        navigate('/login', { replace: true, state: { from: '/riwayat' } })
+        return
+      }
+      if (status === 403) {
+        setError('Akses ditolak: akun Anda bukan admin.')
+      } else {
+        setError(
+          err.response
+            ? `Gagal mengambil riwayat (status ${status}).`
+            : 'Tidak dapat terhubung ke backend. Pastikan FastAPI berjalan.',
+        )
+      }
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [navigate])
 
   useEffect(() => {
     muatData()
