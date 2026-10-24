@@ -5,7 +5,7 @@
  * lalu diarahkan ke Dashboard.
  */
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 
 export default function Login() {
@@ -20,6 +20,9 @@ export default function Login() {
 
   // Halaman asal yang ingin dituju sebelum dialihkan ke login.
   const tujuan = location.state?.from || '/'
+
+  // Pesan sukses dari halaman verifikasi OTP / reset password.
+  const info = location.state?.info || ''
 
   // Sudah login? Jangan tampilkan form lagi.
   useEffect(() => {
@@ -64,6 +67,15 @@ export default function Login() {
           </p>
         </div>
 
+        {info && !error && (
+          <div
+            role="status"
+            className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"
+          >
+            {info}
+          </div>
+        )}
+
         {error && (
           <div
             role="alert"
@@ -95,12 +107,20 @@ export default function Login() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="mb-1.5 block text-sm font-medium text-slate-700"
-            >
-              Password
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-slate-700"
+              >
+                Password
+              </label>
+              <Link
+                to="/forgot-password"
+                className="text-xs font-semibold text-blue-700 hover:underline"
+              >
+                Lupa password?
+              </Link>
+            </div>
             <input
               id="password"
               name="password"
@@ -123,7 +143,14 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="mt-6 text-center text-sm text-slate-500">
+          Belum punya akun?{' '}
+          <Link to="/register" className="font-semibold text-blue-700 hover:underline">
+            Daftar
+          </Link>
+        </p>
+
+        <p className="mt-3 text-center text-xs text-slate-400">
           Kalkulator pajak tetap bisa dipakai tanpa login.
         </p>
       </div>

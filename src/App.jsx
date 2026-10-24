@@ -1,6 +1,10 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 import Login from './Login'
+import Register from './Register'
+import VerifyOTP from './VerifyOTP'
+import ForgotPassword from './ForgotPassword'
+import ResetPassword from './ResetPassword'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import PPh21Bulanan from './pages/PPh21Bulanan'
@@ -63,6 +67,12 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
+        {/* Alur autentikasi: daftar → verifikasi OTP → login. */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        {/* Alur lupa password: minta OTP → reset password → login. */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* Ketiga modul kalkulator wajib login. Guest diarahkan ke /login. */}
         <Route
           path="/pph21-bulanan"
