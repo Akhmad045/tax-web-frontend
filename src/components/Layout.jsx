@@ -20,7 +20,7 @@ export default function Layout({ children }) {
             <img
               src="/mu-logo.png"
               alt="MU Logo"
-              className="h-9 w-9 object-contain"
+              className="h-12 w-12 object-contain"
             />
             <span className="text-lg font-semibold text-white">
               Tim 3 Kalkulator Pajak
