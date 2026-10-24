@@ -47,16 +47,29 @@ export default function Dashboard() {
         </p>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {/*
+        Layout adaptif mengikuti jumlah card yang terlihat:
+        - Guest / user (3 card): 1 kolom (mobile) -> 2 -> 3, sehingga baris
+          terakhir selalu terisi penuh dan tidak ada card menggantung.
+        - Admin (4 card)       : 1 kolom -> 2 -> 4, tampil memanjang ke kanan.
+        Container dibatasi `max-w-5xl` + `mx-auto` agar grid tetap di tengah
+        dan tidak melebar berlebihan di layar ultrawide.
+      */}
+      <div
+        className={`mx-auto grid max-w-5xl gap-5 md:grid-cols-2 ${
+          isAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
+        }`}
+      >
         {tampil.map((m) => (
-          <Link key={m.to} to={m.to} className="group">
-            <Card className="h-full transition group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-md">
+          <Link key={m.to} to={m.to} className="group h-full w-full">
+            <Card className="flex h-full flex-col transition group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-md">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
                 {m.icon}
               </div>
               <h3 className="text-base font-semibold text-slate-800">{m.title}</h3>
               <p className="mt-1 text-sm text-slate-500">{m.desc}</p>
-              <span className="mt-4 inline-block text-sm font-medium text-blue-600 group-hover:underline">
+              {/* mt-auto mendorong link ke dasar card agar sejajar antar card. */}
+              <span className="mt-auto inline-block pt-4 text-sm font-medium text-blue-600 group-hover:underline">
                 Buka modul →
               </span>
             </Card>
