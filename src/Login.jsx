@@ -107,20 +107,12 @@ export default function Login() {
           </div>
 
           <div>
-            <div className="mb-1.5 flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700"
-              >
-                Password
-              </label>
-              <Link
-                to="/forgot-password"
-                className="text-xs font-semibold text-blue-700 hover:underline"
-              >
-                Lupa password?
-              </Link>
-            </div>
+            <label
+              htmlFor="password"
+              className="mb-1.5 block text-sm font-medium text-slate-700"
+            >
+              Password
+            </label>
             <input
               id="password"
               name="password"
@@ -132,6 +124,12 @@ export default function Login() {
               placeholder="Masukkan password"
               className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
+            <Link
+              to="/forgot-password"
+              className="mt-2 mb-4 block text-right text-sm text-blue-600 hover:text-blue-800 hover:underline"
+            >
+              Lupa password?
+            </Link>
           </div>
 
           <button
