@@ -1,0 +1,503 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   OVERRIDE PALET WARNA TAILWIND -> HEX
+   ---------------------------------------------------------------------------
+   Tailwind CSS v4 menyimpan warna bawaan sebagai `oklch()`.
+
+   html2canvas (dipakai html2pdf.js) hanya mengenal `rgb()`/`rgba()`/
+   `hsl()`/`hsla()`. Begitu menemui `oklch()` ia langsung melempar:
+
+       Attempting to parse an unsupported color function 'oklch'
+
+   Masalahnya: html2canvas membaca style dari SELURUH dokumen (termasuk
+   `html`, `body`, dan pseudo-element), bukan hanya elemen target. Jadi
+   menambal warna di dalam area export saja TIDAK cukup — `body` tetap
+   mewarisi `background-color: var(--color-slate-50)` yang bernilai oklch.
+
+   Solusi tuntas: definisikan ulang palet yang dipakai aplikasi dengan
+   nilai HEX. Karena `@theme` menghasilkan custom property yang sama
+   (`--color-slate-50`, dst.), seluruh utility (`bg-slate-50`,
+   `text-slate-800`, `border-blue-200`, ...) otomatis memakai HEX,
+   dan tidak ada lagi `oklch()` di CSS hasil build.
+
+   Nilai HEX di bawah adalah padanan sRGB dari oklch asli Tailwind v4,
+   sehingga tampilan visual aplikasi praktis tidak berubah.
+   --------------------------------------------------------------------------- */
+@theme {
+  /* ---- slate ---- */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cad5e2;
+  --color-slate-400: #90a1b9;
+  --color-slate-500: #62748e;
+  --color-slate-600: #45556c;
+  --color-slate-700: #314158;
+  --color-slate-800: #1d293d;
+  --color-slate-900: #0f172b;
+
+  /* ---- blue ---- */
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bedbff;
+  --color-blue-300: #8ec5ff;
+  --color-blue-400: #51a2ff;
+  --color-blue-500: #2b7fff;
+  --color-blue-600: #155dfc;
+  --color-blue-700: #1447e6;
+  --color-blue-800: #193cb8;
+  --color-blue-900: #1c398e;
+
+  /* ---- red ---- */
+  --color-red-50: #fef2f2;
+  --color-red-100: #ffe2e2;
+  --color-red-200: #ffc9c9;
+  --color-red-300: #ffa2a2;
+  --color-red-400: #ff6467;
+  --color-red-500: #fb2c36;
+  --color-red-600: #e7000b;
+  --color-red-700: #c10007;
+  --color-red-800: #9f0712;
+  --color-red-900: #82181a;
+
+  /* ---- green ---- */
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-200: #b9f8cf;
+  --color-green-300: #7bf1a8;
+  --color-green-400: #05df72;
+  --color-green-500: #00c950;
+  --color-green-600: #00a63e;
+  --color-green-700: #008236;
+  --color-green-800: #016630;
+  --color-green-900: #0d542b;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+/* Tailwind v4 mengisi ::placeholder dengan color-mix(in oklab, ...).
+   html2canvas tidak mendukung color-mix() sama sekali, jadi kita ganti
+   dengan rgba() eksplisit. !important diperlukan karena aturan asli
+   berada di dalam @layer base + @supports. */
+::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   PRINT / PDF EXPORT
+   Area yang dibungkus [ref=componentRef] akan dicetak apa adanya.
+   Tombol aksi ditandai dengan class `print:hidden` di JSX.
+   --------------------------------------------------------------------------- */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  /* Paksa background putih bersih & teks hitam agar hemat tinta dan rapi. */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Sembunyikan header navigasi dan footer aplikasi. */
+  header,
+  footer {
+    display: none !important;
+  }
+
+  /* Hilangkan efek dekoratif yang tidak perlu di kertas. */
+  .shadow,
+  .shadow-sm,
+  .shadow-lg,
+  .shadow-md {
+    box-shadow: none !important;
+  }
+
+  /* Hindari kartu terpotong di tengah halaman. */
+  .print-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Pastikan gradien kartu tetap terbaca saat dicetak. */
+  .print-bg {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Semua elemen dengan class print:hidden disembunyikan (fallback non-Tailwind). */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Sembunyikan UI aplikasi saat mencetak; hanya Bupot yang tampil. */
+  .app-ui {
+    display: none !important;
+  }
+
+  .bupot-root {
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+  }
+
+  /* Saat benar-benar dicetak, pembungkus off-screen harus kembali ke alur
+     normal agar ikut tercetak. */
+  .bupot-offscreen-wrap {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    width: auto !important;
+    z-index: auto !important;
+  }
+}
+
+/* Area Bupot di layar: tidak terlihat oleh pengguna, tetapi tetap ter-render
+   penuh oleh browser sehingga html2pdf.js dapat mengambil snapshot-nya.
+
+   Strategi posisi (hasil pengujian):
+     - `position:absolute; top:0; left:0`  -> elemen benar-benar berada di
+       dalam area render yang pasti, bukan di luar layar. Beberapa browser
+       memangkas area di luar viewport saat rasterisasi, yang bisa membuat
+       hasil html2canvas kosong.
+     - `z-index:-1`  -> berada di lapisan paling belakang sehingga tidak
+       pernah menutupi UI (sudah diuji: tombol & label tetap bisa diklik).
+     - `pointer-events:none` -> tidak bisa menerima klik sama sekali.
+
+   PENTING: `opacity: 0` TIDAK dipakai. opacity 0 membuat html2canvas
+   merender transparan sehingga PDF keluar benar-benar kosong (terbukti
+   dari pengujian: isi 0.00%). Element harus tetap opacity 1.
+
+   PENTING 2: posisi & ukuran dipasang pada elemen PEMBUNGKUS ini, bukan
+   hanya pada dokumen di dalamnya. Bila hanya .bupot-root yang dibuat
+   absolut, ia keluar dari alur layout dan pembungkusnya ber-tinggi 0 ->
+   kanvas setinggi 0 -> PDF kosong. */
+.bupot-offscreen-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 794px; /* ~A4 @96dpi */
+  min-height: 100px;
+  background-color: #ffffff;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 1;
+}
+
+/* Saat dokumen berada di dalam pembungkus off-screen, ia TIDAK perlu
+   diposisikan absolut lagi — cukup jadi blok biasa agar tinggi pembungkus
+   mengikuti tinggi dokumen. */
+.bupot-offscreen-wrap .bupot-root.bupot-offscreen {
+  position: static;
+  left: auto;
+  top: auto;
+  width: auto;
+  /* Ruang napas di bawah kertas agar footer/tanda tangan tidak terpotong
+     saat html2canvas mengambil snapshot. */
+  padding-bottom: 80px;
+}
+
+.bupot-offscreen {
+  position: absolute;
+  left: -10000px;
+  top: 0;
+  width: 794px; /* ~A4 @96dpi */
+  background: #fff;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   GAYA WARNA DOKUMEN CETAK (Bupot / 1721-A1 / SPT Induk)
+   Semua warna memakai nilai HEX eksplisit.
+   --------------------------------------------------------------------------- */
+
+/* Lapis kedua guard warna: dipasang sementara oleh exportPdf.js saat
+   html2pdf mengambil snapshot. Menimpa SEMUA warna di dalam area export
+   dengan HEX yang aman untuk html2canvas. */
+.pdf-print-safe,
+.pdf-print-safe * {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: #cccccc !important;
+  outline-color: #000000 !important;
+  text-decoration-color: #000000 !important;
+  caret-color: #000000 !important;
+  column-rule-color: #000000 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Pengecualian: warna dokumen formal tetap dipertahankan. */
+.pdf-print-safe .bupot-th {
+  background-color: #e8e8e8 !important;
+}
+.pdf-print-safe .bupot-highlight {
+  background-color: #e5e7eb !important;
+}
+.pdf-print-safe .bupot-td,
+.pdf-print-safe .bupot-th,
+.pdf-print-safe .bupot-ident td,
+.pdf-print-safe .bupot-header-meta td {
+  border-color: #000000 !important;
+}
+.pdf-print-safe .bupot-meterai {
+  border-color: #666666 !important;
+}
+
+/* Dokumen formal: hitam-putih, latar putih. */
+.bupot-root,
+.bupot-root * {
+  color: #000000;
+  caret-color: #000000;
+  column-rule-color: #000000;
+  box-shadow: none;
+  background-color: transparent;
+  border-color: #000000;
+  outline-color: #000000;
+  text-decoration-color: #000000;
+}
+.bupot-root,
+.bupot-root .bupot-row {
+  background-color: #ffffff;
+}
+.bupot-root .bupot-td,
+.bupot-root .bupot-th,
+.bupot-root .bupot-ident td,
+.bupot-root .bupot-header-meta td {
+  color: #000000;
+  background-color: #ffffff;
+  border-color: #000000;
+}
+.bupot-root .bupot-th {
+  background-color: #e8e8e8;
+}
+.bupot-root .bupot-highlight,
+.bupot-root .bupot-highlight td {
+  background-color: #e5e7eb !important;
+}
+.bupot-root .bupot-ttd-garis,
+.bupot-root .bupot-header {
+  border-color: #000000;
+}
+.bupot-root .bupot-meterai {
+  color: #444444;
+  background-color: #ffffff;
+  border-color: #666666;
+}
+.bupot-root .bupot-note,
+.bupot-root .bupot-ttd-npwp,
+.bupot-root .bupot-ttd-tempat,
+.bupot-root .bupot-ttd-nama,
+.bupot-root .bupot-masa {
+  color: #000000;
+}
+
+.bupot-root {
+  color: #000000;
+  background: #ffffff;
+  font-family: 'Times New Roman', Times, Georgia, serif;
+  font-size: 10.5pt;
+  line-height: 1.35;
+}
+.bupot-header {
+  text-align: center;
+  border-bottom: 2px solid #000000;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+}
+.bupot-header-title {
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 13pt;
+  font-weight: 700;
+}
+.bupot-header-sub {
+  margin-top: 3px;
+  font-size: 10.5pt;
+}
+.bupot-header-meta {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 9.5pt;
+}
+.bupot-header-meta td {
+  text-align: left;
+  padding: 1px 3px;
+}
+.bupot-meta-label {
+  white-space: nowrap;
+  width: 20%;
+}
+.bupot-meta-label-2 {
+  width: 16%;
+  padding-left: 14px !important;
+}
+.bupot-meta-sep {
+  width: 1%;
+}
+.bupot-meta-val {
+  font-weight: 700;
+}
+.bupot-strong {
+  font-weight: 600;
+}
+.bupot-section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 12px;
+}
+.bupot-section-title {
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  font-size: 10pt;
+  font-weight: 700;
+}
+.bupot-ident {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 10pt;
+}
+.bupot-ident td {
+  vertical-align: top;
+  padding: 2px 4px;
+}
+.bupot-ident-label {
+  width: 30%;
+}
+.bupot-ident-sep {
+  width: 2%;
+}
+.bupot-ident-nilai {
+  font-weight: 600;
+}
+.bupot-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 10pt;
+}
+.bupot-th {
+  text-align: left;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: #e8e8e8;
+  border: 1px solid #000000;
+  padding: 5px 6px;
+  font-size: 9.5pt;
+  font-weight: 700;
+}
+.bupot-th-kode {
+  width: 17%;
+}
+.bupot-th-angka {
+  text-align: right;
+  width: 26%;
+}
+.bupot-th-no,
+.bupot-td-no {
+  text-align: center;
+  width: 6%;
+}
+.bupot-td {
+  vertical-align: top;
+  border: 1px solid #000000;
+  padding: 4px 6px;
+}
+.bupot-td-kode {
+  white-space: nowrap;
+  font-size: 9pt;
+}
+.bupot-td-angka {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.bupot-highlight {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: #e5e7eb !important;
+}
+.bupot-note {
+  color: #222222;
+  margin-top: 5px;
+  font-size: 8.5pt;
+  font-style: italic;
+}
+.bupot-footer {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 22px;
+  padding-bottom: 8px;
+  display: flex;
+}
+
+/* Blok tanda tangan harus utuh dalam satu halaman. Tanpa ini, pemenggalan
+   halaman dapat jatuh di tengah footer: meterai tertinggal di halaman
+   sebelumnya sementara nama perusahaan & NPWP pindah ke halaman berikutnya. */
+.bupot-jangan-pecah,
+.bupot-footer,
+.bupot-ttd-kanan,
+.bupot-ttd-kiri {
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+  -webkit-column-break-inside: avoid;
+}
+.bupot-ttd-kiri {
+  width: 50%;
+  font-size: 9.5pt;
+}
+.bupot-ttd-kanan {
+  text-align: center;
+  width: 45%;
+  font-size: 9.5pt;
+  line-height: 1.5;
+}
+.bupot-ttd-tempat {
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+.bupot-ttd-nama {
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.bupot-meterai {
+  color: #444444;
+  border: 1px dashed #666666;
+  justify-content: center;
+  align-items: center;
+  height: 62px;
+  margin: 4px 26px 8px;
+  font-size: 8.5pt;
+  font-style: italic;
+  display: flex;
+  flex-shrink: 0;
+}
+.bupot-ttd-garis {
+  border-top: 1px solid #000000;
+  margin: 0 14px 4px;
+}
+.bupot-ttd-jabatan {
+  font-weight: 700;
+  font-size: 9.5pt;
+  line-height: 1.5;
+  /* Nama perusahaan pemotong tidak boleh terpotong. */
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.bupot-ttd-npwp {
+  font-size: 9pt;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
