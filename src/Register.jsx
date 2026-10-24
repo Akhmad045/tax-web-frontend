@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from './api/client'
 import { simpanEmailProses, inputKelas } from './authFlow'
+import { pesanGalatApi } from './utils/validation'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -46,21 +47,12 @@ export default function Register() {
       navigate('/verify-otp', { replace: true })
     } catch (err) {
       const status = err.response?.status
-      const detail = err.response?.data?.detail
       if (status === 409) {
-        setError(typeof detail === 'string' ? detail : 'Username atau email sudah terdaftar.')
-      } else if (status === 422) {
-        setError(
-          typeof detail === 'string'
-            ? detail
-            : 'Data belum valid. Periksa email dan panjang password (minimal 6 karakter).',
-        )
+        setError(pesanGalatApi(err, 'Username atau email sudah terdaftar.'))
       } else if (status === 503) {
         setError('Server gagal mengirim email verifikasi. Coba lagi beberapa saat.')
-      } else if (err.response) {
-        setError(`Pendaftaran gagal (status ${status}).`)
       } else {
-        setError('Tidak dapat terhubung ke server. Periksa koneksi atau coba lagi.')
+        setError(pesanGalatApi(err, 'Pendaftaran gagal. Periksa kembali data Anda.'))
       }
     } finally {
       setLoading(false)
@@ -133,11 +125,11 @@ export default function Register() {
               type="password"
               autoComplete="new-password"
               required
-              minLength={6}
+              minLength={8}
               maxLength={72}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimal 6 karakter"
+              placeholder="Minimal 8 karakter"
               className={inputKelas}
             />
           </div>

@@ -154,6 +154,13 @@ export async function exportElementToPdf(element, filename = 'laporan-pajak') {
   element.classList.add('pdf-print-safe')
   const restore = paksaWarnaHex(element)
 
+  // Lebar/tinggi snapshot tidak boleh lebih kecil dari area yang dirender.
+  // `width`/`height` yang dipaksa lebih kecil membuat html2canvas memotong
+  // kanan/bawah (PDF terpotong); nilai 0 membuat kanvas kosong. Karena itu
+  // lebar jendela tiruan juga dihitung dari ukuran elemen, bukan angka tetap.
+  const lebarSnapshot = Math.max(1, Math.ceil(ukuran.width))
+  const tinggiSnapshot = Math.max(1, Math.ceil(ukuran.height))
+
   try {
     await html2pdf()
       .set({
@@ -167,10 +174,12 @@ export async function exportElementToPdf(element, filename = 'laporan-pajak') {
           logging: false,
           // Paksa html2canvas merender pada ukuran dokumen yang sebenarnya,
           // bukan mengikuti posisi elemen di halaman.
-          width: Math.ceil(ukuran.width),
-          height: Math.ceil(ukuran.height),
-          windowWidth: 800,
-          windowHeight: Math.ceil(ukuran.height),
+          width: lebarSnapshot,
+          height: tinggiSnapshot,
+          // Jendela tiruan minimal selebar konten (+ruang margin) agar layout
+          // responsif tidak menyusut dan memotong kolom tabel di kanan.
+          windowWidth: Math.max(800, lebarSnapshot + 40),
+          windowHeight: Math.max(600, tinggiSnapshot),
           scrollX: 0,
           scrollY: 0,
         },

@@ -15,6 +15,7 @@ import {
   inputKelas,
   simpanEmailProses,
 } from './authFlow'
+import { pesanGalatApi } from './utils/validation'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
@@ -52,25 +53,17 @@ export default function ResetPassword() {
       })
     } catch (err) {
       const status = err.response?.status
-      const detail = err.response?.data?.detail
       if (status === 400) {
-        setError('Kode OTP salah. Periksa kembali email Anda.')
+        // Backend menyertakan sisa percobaan ("Sisa percobaan: 3.").
+        setError(pesanGalatApi(err, 'Kode OTP salah. Periksa kembali email Anda.'))
       } else if (status === 410) {
         setError('Kode sudah kedaluwarsa. Minta kode baru dari halaman Lupa Password.')
       } else if (status === 404) {
         setError('Kode tidak ditemukan atau email tidak terdaftar. Minta kode baru.')
-      } else if (status === 422) {
-        setError(
-          typeof detail === 'string'
-            ? detail
-            : 'Data belum valid. Password minimal 6 karakter.',
-        )
-      } else if (err.response) {
-        setError(
-          typeof detail === 'string' ? detail : `Reset gagal (status ${status}).`,
-        )
+      } else if (status === 429) {
+        setError('Terlalu banyak percobaan salah. Minta kode OTP baru agar bisa mencoba lagi.')
       } else {
-        setError('Tidak dapat terhubung ke server. Periksa koneksi atau coba lagi.')
+        setError(pesanGalatApi(err, 'Reset password gagal. Coba lagi.'))
       }
     } finally {
       setLoading(false)
@@ -148,11 +141,11 @@ export default function ResetPassword() {
               type="password"
               autoComplete="new-password"
               required
-              minLength={6}
+              minLength={8}
               maxLength={72}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimal 6 karakter"
+              placeholder="Minimal 8 karakter"
               className={inputKelas}
             />
           </div>

@@ -445,7 +445,7 @@ export default function PPhBadan() {
                   <div>
                     <p className="text-xs text-blue-100">Status</p>
                     <p className="mt-0.5 text-base font-semibold">
-                      {result.hasil.status?.replace('_', ' ') || '-'}
+                      {result.hasil.status?.replaceAll('_', ' ') || '-'}
                     </p>
                   </div>
                 </div>

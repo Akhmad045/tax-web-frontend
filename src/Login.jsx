@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, User } from 'lucide-react'
 import { useAuth } from './AuthContext'
+import { pesanGalatApi } from './utils/validation'
 
 export default function Login() {
   const { login, isLoggedIn } = useAuth()
@@ -20,7 +21,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
 
   // Halaman asal yang ingin dituju sebelum dialihkan ke login.
-  const tujuan = location.state?.from || '/'
+  // Guard: hanya path internal ("/...") yang dipakai. Tanpa ini,
+  // `state.from` berisi "//evil.com" atau "https://evil.com" akan membuat
+  // `navigate()` membuka situs luar (open redirect) setelah login berhasil.
+  const mentah = location.state?.from
+  const tujuan =
+    typeof mentah === 'string' &&
+    mentah.startsWith('/') &&
+    !mentah.startsWith('//') &&
+    !mentah.startsWith('/\\')
+      ? mentah
+      : '/'
 
   // Pesan sukses dari halaman verifikasi OTP / reset password.
   const info = location.state?.info || ''
@@ -43,10 +54,8 @@ export default function Login() {
         setError('Username atau password salah.')
       } else if (status === 403) {
         setError('Akun ini dinonaktifkan.')
-      } else if (err.response) {
-        setError(`Login gagal (status ${status}).`)
       } else {
-        setError('Tidak dapat terhubung ke server. Periksa koneksi atau coba lagi.')
+        setError(pesanGalatApi(err, 'Login gagal. Coba lagi.'))
       }
     } finally {
       setLoading(false)

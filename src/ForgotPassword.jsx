@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from './api/client'
 import { inputKelas, simpanEmailProses } from './authFlow'
+import { pesanGalatApi } from './utils/validation'
 
 export default function ForgotPassword() {
   const navigate = useNavigate()
@@ -33,10 +34,8 @@ export default function ForgotPassword() {
         setError('Format email tidak valid.')
       } else if (status === 503) {
         setError('Server gagal mengirim email. Coba lagi beberapa saat.')
-      } else if (err.response) {
-        setError(`Permintaan gagal (status ${status}).`)
       } else {
-        setError('Tidak dapat terhubung ke server. Periksa koneksi atau coba lagi.')
+        setError(pesanGalatApi(err, 'Permintaan gagal. Coba lagi.'))
       }
     } finally {
       setLoading(false)

@@ -14,7 +14,7 @@ export default function StatusBadge({ status }) {
         map[status] || map.NIHIL,
       ].join(' ')}
     >
-      {status?.replace('_', ' ') || '-'}
+      {status?.replaceAll('_', ' ') || '-'}
     </span>
   )
 }

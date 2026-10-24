@@ -16,6 +16,7 @@ import {
   inputKelas,
   simpanEmailProses,
 } from './authFlow'
+import { pesanGalatApi } from './utils/validation'
 
 const JUMLAH_DIGIT = 6
 
@@ -115,21 +116,19 @@ export default function VerifyOTP() {
       })
     } catch (err) {
       const status = err.response?.status
-      const detail = err.response?.data?.detail
       if (status === 400) {
-        setError('Kode verifikasi salah. Periksa kembali email Anda.')
+        // Backend menyertakan sisa percobaan sebelum kode dikunci.
+        setError(pesanGalatApi(err, 'Kode verifikasi salah. Periksa kembali email Anda.'))
       } else if (status === 410) {
         setError('Kode sudah kedaluwarsa. Silakan daftar ulang untuk kode baru.')
       } else if (status === 404) {
         setError('Kode tidak ditemukan. Silakan daftar ulang.')
       } else if (status === 409) {
         setError('Email ini sudah terverifikasi. Silakan langsung masuk.')
-      } else if (err.response) {
-        setError(
-          typeof detail === 'string' ? detail : `Verifikasi gagal (status ${status}).`,
-        )
+      } else if (status === 429) {
+        setError('Terlalu banyak percobaan salah. Minta kode baru agar bisa mencoba lagi.')
       } else {
-        setError('Tidak dapat terhubung ke server. Periksa koneksi atau coba lagi.')
+        setError(pesanGalatApi(err, 'Verifikasi gagal. Coba lagi.'))
       }
     } finally {
       setLoading(false)
@@ -159,23 +158,14 @@ export default function VerifyOTP() {
       refs.current[0]?.focus()
     } catch (err) {
       const status = err.response?.status
-      const detail = err.response?.data?.detail
       if (status === 404) {
         setError(
-          typeof detail === 'string'
-            ? detail
-            : 'Data pendaftaran tidak ditemukan. Silakan daftar ulang.',
+          pesanGalatApi(err, 'Data pendaftaran tidak ditemukan. Silakan daftar ulang.'),
         )
       } else if (status === 422) {
         setError('Format email tidak valid.')
-      } else if (err.response) {
-        setError(
-          typeof detail === 'string'
-            ? detail
-            : `Gagal mengirim ulang kode (status ${status}).`,
-        )
       } else {
-        setError('Tidak dapat terhubung ke server. Periksa koneksi atau coba lagi.')
+        setError(pesanGalatApi(err, 'Gagal mengirim ulang kode. Coba lagi.'))
       }
     } finally {
       setKirimUlang(false)

@@ -14,6 +14,7 @@ import {
   ambilRiwayat,
   hapusRiwayat,
 } from '../utils/riwayat'
+import { pesanGalatApi } from '../utils/validation'
 
 const FILTER = [
   { value: '', label: 'Semua Modul' },
@@ -65,12 +66,10 @@ export default function RiwayatData() {
       }
       if (status === 403) {
         setError('Akses ditolak: akun Anda bukan admin.')
+      } else if (!err.response) {
+        setError('Tidak dapat terhubung ke backend. Pastikan FastAPI berjalan.')
       } else {
-        setError(
-          err.response
-            ? `Gagal mengambil riwayat (status ${status}).`
-            : 'Tidak dapat terhubung ke backend. Pastikan FastAPI berjalan.',
-        )
+        setError(pesanGalatApi(err, `Gagal mengambil riwayat (status ${status}).`))
       }
     } finally {
       setLoading(false)
@@ -98,14 +97,18 @@ export default function RiwayatData() {
     try {
       const data = await ambilDetailRiwayat(id)
       setDetail(data)
-    } catch {
-      setError('Gagal memuat detail riwayat.')
+    } catch (err) {
+      setError(pesanGalatApi(err, 'Gagal memuat detail riwayat.'))
     } finally {
       setLoadingDetail(false)
     }
   }
 
   const konfirmasiHapus = async (id) => {
+    // Cegah klik ganda: request hapus kedua untuk id yang sama diabaikan
+    // selama yang pertama masih berjalan (kalau tidak, tombol bisa
+    // memunculkan dua dialog dan dua request).
+    if (menghapus !== null) return
     if (!window.confirm('Hapus data riwayat ini? Tindakan tidak dapat dibatalkan.')) {
       return
     }
@@ -114,8 +117,8 @@ export default function RiwayatData() {
       await hapusRiwayat(id)
       setItems((prev) => prev.filter((it) => it.id !== id))
       if (detail?.id === id) setDetail(null)
-    } catch {
-      setError('Gagal menghapus riwayat.')
+    } catch (err) {
+      setError(pesanGalatApi(err, 'Gagal menghapus riwayat.'))
     } finally {
       setMenghapus(null)
     }
