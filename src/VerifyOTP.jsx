@@ -29,13 +29,32 @@ export default function VerifyOTP() {
   // Satu state per kotak digit agar bisa auto-pindah fokus.
   const [digit, setDigit] = useState(Array(JUMLAH_DIGIT).fill(''))
   const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
+  // Cooldown kirim ulang (detik). 0 = tombol aktif.
+  const [cooldown, setCooldown] = useState(0)
+  const [kirimUlang, setKirimUlang] = useState(false)
   const refs = useRef([])
 
   // Fokus ke kotak pertama saat halaman dibuka.
   useEffect(() => {
     refs.current[0]?.focus()
   }, [])
+
+  /**
+   * Hitung mundur cooldown.
+   *
+   * Interval dipasang hanya saat cooldown > 0 dan selalu dibersihkan di
+   * cleanup, sehingga tidak ada timer menumpuk atau berjalan setelah
+   * komponen dilepas.
+   */
+  useEffect(() => {
+    if (cooldown <= 0) return undefined
+    const timer = setInterval(() => {
+      setCooldown((sisa) => (sisa <= 1 ? 0 : sisa - 1))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [cooldown])
 
   const kode = digit.join('')
 
@@ -117,6 +136,52 @@ export default function VerifyOTP() {
     }
   }
 
+  const handleKirimUlang = async () => {
+    if (cooldown > 0 || kirimUlang) return
+
+    setError('')
+    setInfo('')
+
+    const alamat = email.trim()
+    if (!alamat) {
+      setError('Email tidak ditemukan. Isi email pendaftaran Anda.')
+      return
+    }
+
+    setKirimUlang(true)
+    try {
+      await api.post('/api/resend-otp', { email: alamat })
+      // Backend membalas segera (pengiriman email berjalan di latar belakang).
+      setInfo(`Kode baru sedang dikirim ke ${alamat}. Periksa juga folder spam.`)
+      setCooldown(60)
+      // Kosongkan kotak agar user tidak mencampur kode lama dengan yang baru.
+      setDigit(Array(JUMLAH_DIGIT).fill(''))
+      refs.current[0]?.focus()
+    } catch (err) {
+      const status = err.response?.status
+      const detail = err.response?.data?.detail
+      if (status === 404) {
+        setError(
+          typeof detail === 'string'
+            ? detail
+            : 'Data pendaftaran tidak ditemukan. Silakan daftar ulang.',
+        )
+      } else if (status === 422) {
+        setError('Format email tidak valid.')
+      } else if (err.response) {
+        setError(
+          typeof detail === 'string'
+            ? detail
+            : `Gagal mengirim ulang kode (status ${status}).`,
+        )
+      } else {
+        setError('Tidak dapat terhubung ke server. Periksa koneksi atau coba lagi.')
+      }
+    } finally {
+      setKirimUlang(false)
+    }
+  }
+
   return (
     <div className="mx-auto flex max-w-md flex-col justify-center py-10">
       <div className="rounded-2xl bg-white p-8 shadow-lg ring-1 ring-slate-200">
@@ -126,6 +191,15 @@ export default function VerifyOTP() {
             Masukkan 6 digit kode yang dikirim ke email Anda.
           </p>
         </div>
+
+        {info && (
+          <div
+            role="status"
+            className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"
+          >
+            {info}
+          </div>
+        )}
 
         {error && (
           <div
@@ -185,6 +259,21 @@ export default function VerifyOTP() {
             className="w-full rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? 'Memverifikasi…' : 'Verifikasi'}
+          </button>
+
+          {/* Kirim ulang OTP dengan cooldown 60 detik. */}
+          <button
+            type="button"
+            onClick={handleKirimUlang}
+            disabled={cooldown > 0 || kirimUlang}
+            aria-live="polite"
+            className="w-full rounded-xl border border-blue-300 px-4 py-2.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 disabled:hover:bg-transparent"
+          >
+            {cooldown > 0
+              ? `Kirim ulang dalam (${cooldown}) detik`
+              : kirimUlang
+                ? 'Mengirim…'
+                : 'Kirim Ulang Kode'}
           </button>
         </form>
 
