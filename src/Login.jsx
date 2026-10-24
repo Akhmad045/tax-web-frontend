@@ -6,6 +6,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Lock, User } from 'lucide-react'
 import { useAuth } from './AuthContext'
 
 export default function Login() {
@@ -61,9 +62,9 @@ export default function Login() {
             alt="MU Logo"
             className="mx-auto h-16 w-16 object-contain"
           />
-          <h1 className="mt-4 text-xl font-bold text-slate-800">Masuk</h1>
+          <h1 className="mt-4 text-xl font-bold text-slate-800">Tim 3 Kalkulator Pajak</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Halaman Riwayat hanya dapat diakses admin.
+            Silakan masuk untuk menghitung pajak.
           </p>
         </div>
 
@@ -93,17 +94,23 @@ export default function Login() {
             >
               Username
             </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              autoComplete="username"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Masukkan username"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+            <div className="relative">
+              <User
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Masukkan username"
+                className="pl-10 block w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
 
           <div>
@@ -113,17 +120,23 @@ export default function Login() {
             >
               Password
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Masukkan password"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+            <div className="relative">
+              <Lock
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Masukkan password"
+                className="pl-10 block w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
             <Link
               to="/forgot-password"
               className="mt-2 mb-4 block text-right text-sm text-blue-600 hover:text-blue-800 hover:underline"
@@ -146,10 +159,6 @@ export default function Login() {
           <Link to="/register" className="font-semibold text-blue-700 hover:underline">
             Daftar
           </Link>
-        </p>
-
-        <p className="mt-3 text-center text-xs text-slate-400">
-          Kalkulator pajak tetap bisa dipakai tanpa login.
         </p>
       </div>
     </div>
