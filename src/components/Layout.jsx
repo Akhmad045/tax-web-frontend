@@ -32,7 +32,7 @@ export default function Layout({ children }) {
   const tampilNav = navItems.filter((item) => !item.adminOnly || isAdmin)
 
   const handleLogout = () => {
-    // 1) Hapus sesi lewat AuthContext (membersihkan token, role, username).
+    // 1) Hapus sesi lewat AuthContext (token, role, username).
     logout()
 
     // 2) Hapus langsung dari localStorage sebagai jaring pengaman, bila
@@ -47,7 +47,7 @@ export default function Layout({ children }) {
 
     // 3) Redirect penuh ke /login. Navigasi penuh (bukan SPA) memastikan
     //    semua state React dibuang sehingga isi halaman terlindungi tidak
-    //    tersisa di memori/layar.
+    //    tersisa di memori/layar dan tombol Back tidak membuka halaman itu.
     if (typeof window !== 'undefined') window.location.assign('/login')
   }
 
