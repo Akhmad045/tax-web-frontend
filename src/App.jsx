@@ -63,9 +63,31 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/pph21-bulanan" element={<PPh21Bulanan />} />
-        <Route path="/pph21-tahunan" element={<PPh21Tahunan />} />
-        <Route path="/pph-badan" element={<PPhBadan />} />
+        {/* Ketiga modul kalkulator wajib login. Guest diarahkan ke /login. */}
+        <Route
+          path="/pph21-bulanan"
+          element={
+            <ProtectedRoute>
+              <PPh21Bulanan />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pph21-tahunan"
+          element={
+            <ProtectedRoute>
+              <PPh21Tahunan />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pph-badan"
+          element={
+            <ProtectedRoute>
+              <PPhBadan />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/riwayat"
           element={

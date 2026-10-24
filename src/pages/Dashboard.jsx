@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../AuthContext'
 import Card from '../components/Card'
 
 const modules = [
@@ -25,10 +26,17 @@ const modules = [
     title: 'Riwayat Perhitungan',
     desc: 'Lihat, telusuri detail, dan kelola seluruh perhitungan yang sudah disimpan.',
     icon: '🗂️',
+    // Hanya dirender untuk admin. Guest & role "user" tidak melihat card ini
+    // sama sekali (bukan sekadar disabled).
+    adminOnly: true,
   },
 ]
 
 export default function Dashboard() {
+  const { isAdmin } = useAuth()
+
+  const tampil = modules.filter((m) => !m.adminOnly || isAdmin)
+
   return (
     <div className="space-y-8">
       <div className="rounded-2xl bg-gradient-to-r from-blue-700 to-blue-500 p-8 text-white shadow-lg">
@@ -40,7 +48,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-        {modules.map((m) => (
+        {tampil.map((m) => (
           <Link key={m.to} to={m.to} className="group">
             <Card className="h-full transition group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-md">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
