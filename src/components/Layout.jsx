@@ -1,10 +1,18 @@
 /**
- * Layout utama aplikasi: header biru + area konten.
+ * Layout utama aplikasi: header fintech + area konten.
  *
- * Navigasi menyesuaikan status login:
- * - Belum login  : link Riwayat disembunyikan, tampil tombol "Masuk".
- * - Login admin  : link Riwayat tampil, tampil nama + tombol "Keluar".
- * - Login user   : link Riwayat tetap disembunyikan (hanya admin).
+ * Catatan: tidak ada file Header.jsx terpisah — header tinggal di file
+ * ini (Layout.jsx) dan dipakai semua halaman.
+ *
+ * Navigasi menyesuaikan status login (conditional rendering dari
+ * AuthContext.isLoggedIn, yang membaca token di localStorage):
+ * - Belum login  : HANYA logo TM3 + tombol "Masuk" di kanan. Teks
+ *   "Tim 3 Kalkulator Pajak" dan seluruh menu (Dashboard, PPh 21
+ *   Bulanan, PPh 21 Tahunan, PPh Badan) disembunyikan.
+ * - Login admin  : teks + menu tampil (termasuk Riwayat), tampil nama
+ *   + tombol "Logout".
+ * - Login user   : teks + menu tampil (tanpa Riwayat), tampil nama
+ *   + tombol "Logout".
  */
 import { Link, NavLink } from 'react-router-dom'
 import { Bell, User } from 'lucide-react'
@@ -57,52 +65,72 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-md">
         {/* Header khusus mobile: sapaan + profil/lonceng, bersih tanpa
-            menu desktop yang berantakan. */}
+            menu desktop yang berantakan. Tamu: hanya logo TM3 + Masuk. */}
         <div className="flex items-center justify-between px-4 py-3 md:hidden">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white">
-              <User size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-800">
-                Halo, {isLoggedIn ? username || 'Admin' : 'selamat datang'}
-              </p>
-              <p className="text-xs text-slate-500">
-                {isLoggedIn && isAdmin ? 'Admin · ' : ''}Kalkulator Pajak
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            aria-label="Notifikasi"
-            className="rounded-full bg-slate-100 p-2 text-slate-600 transition hover:bg-slate-200"
-          >
-            <Bell size={20} />
-          </button>
+          {isLoggedIn ? (
+            <>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white">
+                  <User size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">
+                    Halo, {username || 'Admin'}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {isAdmin ? 'Admin · ' : ''}Kalkulator Pajak
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                aria-label="Notifikasi"
+                className="rounded-full bg-slate-100 p-2 text-slate-600 transition hover:bg-slate-200"
+              >
+                <Bell size={20} />
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-center w-10 h-10 bg-indigo-600 text-white font-extrabold text-sm rounded-xl tracking-wider">
+                TM3
+              </div>
+              <NavLink
+                to="/login"
+                className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              >
+                Masuk
+              </NavLink>
+            </>
+          )}
         </div>
 
         {/* Header desktop: disembunyikan total di mobile. */}
         <div className="mx-auto hidden max-w-6xl px-6 py-4 md:flex md:flex-row md:items-center md:justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div className="flex items-center justify-center w-10 h-10 bg-indigo-600 text-white font-extrabold text-sm rounded-xl tracking-wider">TM3</div>
-            <span className="text-lg font-semibold text-slate-800">
-              Tim 3 Kalkulator Pajak
-            </span>
+            {isLoggedIn && (
+              <span className="text-lg font-semibold text-slate-800">
+                Tim 3 Kalkulator Pajak
+              </span>
+            )}
           </Link>
 
           <div className="flex flex-wrap items-center gap-3">
-            <nav className="flex flex-wrap gap-1">
-              {tampilNav.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === '/'}
-                  className={kelasNav}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </nav>
+            {isLoggedIn && (
+              <nav className="flex flex-wrap gap-1">
+                {tampilNav.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/'}
+                    className={kelasNav}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+              </nav>
+            )}
 
             {isLoggedIn ? (
               <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
