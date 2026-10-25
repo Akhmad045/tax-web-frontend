@@ -1,5 +1,14 @@
 import { Link } from 'react-router-dom'
-import { Calculator, FileDown, History } from 'lucide-react'
+import {
+  Calculator,
+  Coins,
+  FileDown,
+  FileSpreadsheet,
+  History,
+  Landmark,
+  Percent,
+  ReceiptText,
+} from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import Card from '../components/Card'
 
@@ -110,22 +119,33 @@ export default function Dashboard() {
   if (!isLoggedIn) {
     return (
       <div className="space-y-10">
-        {/* HERO */}
-        <section className="animate-fadeInUp rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-20 text-white shadow-lg md:px-12 md:py-32">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-indigo-100">
-            Dipercaya oleh berbagai tim keuangan &amp; praktisi pajak
-          </p>
-          <h1 className="mt-6 max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
-            TaxEase untuk Profesional Modern.
-          </h1>
-          <p className="mt-6 max-w-2xl text-base text-indigo-100 md:text-lg">
-            Hitung PPh 21 &amp; PPh Badan secara akurat, otomatis, dan sesuai
-            regulasi terbaru UU HPP.
-          </p>
-          <div className="mt-10">
-            <Link to="/register" className={kelasCtaPutih}>
-              Mulai Sekarang
-            </Link>
+        {/* HERO: ikon latar perpajakan/keuangan (bukan palu hakim),
+            absolut + transparan, melayang dengan durasi/delay berbeda.
+            Konten teks dibungkus relative z-10 agar selalu di atas ikon. */}
+        <section className="animate-fadeInUp relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-20 text-white shadow-lg md:px-12 md:py-32">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+            <Coins className="animate-float absolute right-8 top-8 h-24 w-24 text-white/20" style={{ animationDuration: '6s', animationDelay: '0s' }} />
+            <ReceiptText className="animate-float absolute bottom-10 right-24 h-32 w-32 text-white/10" style={{ animationDuration: '8s', animationDelay: '1s' }} />
+            <Percent className="animate-float absolute bottom-8 right-8 h-24 w-24 text-white/20" style={{ animationDuration: '7s', animationDelay: '0.5s' }} />
+            <Landmark className="animate-float absolute right-1/3 top-10 h-24 w-24 text-white/10" style={{ animationDuration: '9s', animationDelay: '1.5s' }} />
+            <FileSpreadsheet className="animate-float absolute bottom-6 left-1/2 h-32 w-32 text-white/10" style={{ animationDuration: '7.5s', animationDelay: '2s' }} />
+          </div>
+          <div className="relative z-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-indigo-100">
+              Dipercaya oleh berbagai tim keuangan &amp; praktisi pajak
+            </p>
+            <h1 className="mt-6 max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
+              TaxEase untuk Profesional Modern.
+            </h1>
+            <p className="mt-6 max-w-2xl text-base text-indigo-100 md:text-lg">
+              Hitung PPh 21 &amp; PPh Badan secara akurat, otomatis, dan sesuai
+              regulasi terbaru UU HPP.
+            </p>
+            <div className="mt-10">
+              <Link to="/register" className={kelasCtaPutih}>
+                Mulai Sekarang
+              </Link>
+            </div>
           </div>
         </section>
 

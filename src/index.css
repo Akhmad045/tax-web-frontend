@@ -123,6 +123,22 @@ body {
   animation: fadeInUp 0.7s ease-out both;
 }
 
+/* Animasi latar hero landing: ikon melayang naik-turun dengan sedikit
+   rotasi. Durasi/delay diatur per ikon di JSX agar tidak serentak. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(6deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 /* Safe area bawah untuk BottomNav di HP (notch / gesture bar Android).
    Unlayered CSS sengaja dipakai agar menang atas `py-3` dari Tailwind:
    padding bawah = 0.75rem + inset perangkat, bukan sekadar inset. */
