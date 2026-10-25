@@ -474,10 +474,10 @@ export default function PPh21Tahunan() {
   }
 
   return (
-    <div className="space-y-6" ref={componentRef}>
+    <div className="space-y-6 animate-fadeInUp" ref={componentRef}>
       {/* ===== UI APLIKASI (tidak ikut dicetak) ===== */}
       <div className="app-ui space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3 animate-fadeInUp" style={{ animationDelay: '100ms' }}>
         <div>
           <h1 className="text-xl font-bold text-slate-800 md:text-2xl">PPh 21 Tahunan</h1>
           <p className="mt-1 text-sm text-slate-500 print:hidden">
@@ -611,7 +611,7 @@ export default function PPh21Tahunan() {
               {errors.bulanan}
             </p>
           )}
-          <div className="overflow-x-auto rounded-xl border border-slate-100">
+          <div className="overflow-x-auto rounded-xl border border-slate-100 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
             <table className="w-full min-w-[1080px] text-sm">
               <thead className="bg-slate-50 text-xs uppercase text-slate-500">
                 <tr>

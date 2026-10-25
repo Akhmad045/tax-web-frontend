@@ -266,10 +266,10 @@ export default function PPh21Bulanan() {
   }
 
   return (
-    <div className="space-y-6" ref={componentRef}>
+    <div className="space-y-6 animate-fadeInUp" ref={componentRef}>
       {/* ===== UI APLIKASI (tidak ikut dicetak) ===== */}
       <div className="app-ui space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3 animate-fadeInUp" style={{ animationDelay: '100ms' }}>
         <div>
           <h1 className="text-xl font-bold text-slate-800 md:text-2xl">PPh 21 Bulanan</h1>
           <p className="mt-1 text-sm text-slate-500 print:hidden">
@@ -287,7 +287,7 @@ export default function PPh21Bulanan() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-5">
+      <div className="grid gap-6 lg:grid-cols-5 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
         {/* FORM */}
         <Card className="lg:col-span-2" title="Data Penghasilan" subtitle="Masukkan angka dalam Rupiah">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -474,7 +474,7 @@ export default function PPh21Bulanan() {
         </Card>
 
         {/* HASIL */}
-        <div className="space-y-6 lg:col-span-3">
+        <div className="space-y-6 lg:col-span-3 animate-fadeInUp" style={{ animationDelay: '300ms' }}>
           {error && (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
               <p className="font-semibold">Gagal menghitung</p>

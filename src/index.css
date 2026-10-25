@@ -107,11 +107,13 @@ body {
   @apply bg-slate-50 font-sans text-slate-800 antialiased;
 }
 
-/* Animasi load landing page: fadeInUp untuk Hero dan Section. */
+/* Animasi masuk halaman: fadeInUp untuk Hero/Section landing dan untuk
+   container halaman kalkulator + Riwayat (dengan delay bertingkat di JSX
+   agar judul, form, dan tabel muncul bergantian). */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -120,7 +122,7 @@ body {
 }
 
 .animate-fadeInUp {
-  animation: fadeInUp 0.7s ease-out both;
+  animation: fadeInUp 0.5s ease-out both;
 }
 
 /* Animasi latar hero landing: ikon melayang naik-turun dengan sedikit
