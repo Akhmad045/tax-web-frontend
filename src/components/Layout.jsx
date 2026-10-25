@@ -7,7 +7,9 @@
  * - Login user   : link Riwayat tetap disembunyikan (hanya admin).
  */
 import { Link, NavLink } from 'react-router-dom'
+import { Bell, User } from 'lucide-react'
 import { useAuth } from '../AuthContext'
+import BottomNav from './BottomNav'
 
 const navItems = [
   { to: '/', label: 'Dashboard' },
@@ -54,7 +56,33 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="bg-blue-700 shadow-lg">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-4 md:flex-row md:items-center md:justify-between">
+        {/* Header khusus mobile: sapaan + profil/lonceng, bersih tanpa
+            menu desktop yang berantakan. */}
+        <div className="flex items-center justify-between px-4 py-3 md:hidden">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white">
+              <User size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">
+                Halo, {isLoggedIn ? username || 'Admin' : 'selamat datang'}
+              </p>
+              <p className="text-xs text-blue-200">
+                {isLoggedIn && isAdmin ? 'Admin · ' : ''}Kalkulator Pajak
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            aria-label="Notifikasi"
+            className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-500"
+          >
+            <Bell size={20} />
+          </button>
+        </div>
+
+        {/* Header desktop: disembunyikan total di mobile. */}
+        <div className="mx-auto hidden max-w-6xl px-6 py-4 md:flex md:flex-row md:items-center md:justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img
               src="/mu-logo.png"
@@ -111,11 +139,16 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 md:px-6 md:py-8 md:pb-8">
+        {children}
+      </main>
 
-      <footer className="mx-auto max-w-6xl px-6 pb-10 pt-4 text-center text-xs text-slate-400">
+      <footer className="mx-auto max-w-6xl px-6 pb-24 pt-4 text-center text-xs text-slate-400 md:pb-10">
         Tax Web App · Frontend React + Vite + Tailwind · Backend FastAPI
       </footer>
+
+      {/* Bottom navigation mobile, hanya untuk user yang sudah login. */}
+      {isLoggedIn && <BottomNav />}
     </div>
   )
 }

@@ -5,7 +5,7 @@ export default function Card({ title, subtitle, children, className = '' }) {
   return (
     <section
       className={[
-        'rounded-2xl border border-slate-100 bg-white p-6 shadow-sm print-avoid-break',
+        'rounded-2xl border border-slate-100 bg-white p-4 shadow-sm print-avoid-break md:p-6',
         className,
       ].join(' ')}
     >

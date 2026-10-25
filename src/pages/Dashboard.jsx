@@ -39,9 +39,9 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-2xl bg-gradient-to-r from-blue-700 to-blue-500 p-8 text-white shadow-lg">
-        <h1 className="text-2xl font-bold md:text-3xl">Dashboard Kalkulator Pajak</h1>
-        <p className="mt-2 max-w-2xl text-blue-100">
+      <div className="rounded-2xl bg-gradient-to-r from-blue-700 to-blue-500 p-5 text-white shadow-lg md:p-8">
+        <h1 className="text-xl font-bold md:text-3xl">Dashboard Kalkulator Pajak</h1>
+        <p className="mt-2 max-w-2xl text-sm text-blue-100 md:text-base">
           Pilih modul perhitungan pajak di bawah ini. Semua perhitungan dikirim ke
           backend FastAPI dan hasilnya ditampilkan secara rinci.
         </p>
@@ -49,27 +49,28 @@ export default function Dashboard() {
 
       {/*
         Layout adaptif mengikuti jumlah card yang terlihat:
-        - Guest / user (3 card): 1 kolom (mobile) -> 2 -> 3, sehingga baris
-          terakhir selalu terisi penuh dan tidak ada card menggantung.
-        - Admin (4 card)       : 1 kolom -> 2 -> 4, tampil memanjang ke kanan.
+        - Mobile: selalu 2 kolom (gaya aplikasi fintech), font diperkecil.
+        - Guest / user (3 card): 2 -> 2 -> 3, sehingga baris terakhir
+          selalu terisi penuh dan tidak ada card menggantung.
+        - Admin (4 card)       : 2 -> 2 -> 4, tampil memanjang ke kanan.
         Container dibatasi `max-w-5xl` + `mx-auto` agar grid tetap di tengah
         dan tidak melebar berlebihan di layar ultrawide.
       */}
       <div
-        className={`mx-auto grid max-w-5xl gap-5 md:grid-cols-2 ${
+        className={`mx-auto grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-2 md:gap-5 ${
           isAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
         }`}
       >
         {tampil.map((m) => (
           <Link key={m.to} to={m.to} className="group h-full w-full">
             <Card className="flex h-full flex-col transition group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-md">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-xl md:h-12 md:w-12 md:text-2xl">
                 {m.icon}
               </div>
-              <h3 className="text-base font-semibold text-slate-800">{m.title}</h3>
-              <p className="mt-1 text-sm text-slate-500">{m.desc}</p>
+              <h3 className="text-sm font-semibold text-slate-800 md:text-base">{m.title}</h3>
+              <p className="mt-1 text-xs text-slate-500 md:text-sm">{m.desc}</p>
               {/* mt-auto mendorong link ke dasar card agar sejajar antar card. */}
-              <span className="mt-auto inline-block pt-4 text-sm font-medium text-blue-600 group-hover:underline">
+              <span className="mt-auto inline-block pt-3 text-xs font-medium text-blue-600 group-hover:underline md:pt-4 md:text-sm">
                 Buka modul →
               </span>
             </Card>

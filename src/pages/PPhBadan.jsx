@@ -205,7 +205,7 @@ export default function PPhBadan() {
       {/* Header: judul vertikal + tombol aksi (tidak ikut tercetak) */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">PPh Badan</h1>
+          <h1 className="text-xl font-bold text-slate-800 md:text-2xl">PPh Badan</h1>
           <p className="mt-1 text-sm text-slate-500 print:hidden">
             Hitung PPh Badan setahun (PPh 29) dengan fasilitas Pasal 31E.
           </p>
@@ -352,7 +352,7 @@ export default function PPhBadan() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? 'Menghitung…' : 'Hitung Pajak'}
               </button>
@@ -414,7 +414,7 @@ export default function PPhBadan() {
                         ? 'PPh Pasal 29 (Lebih Bayar)'
                         : 'PPh Pasal 29 (Kurang Bayar)'}
                     </p>
-                    <p className="mt-1 text-3xl font-bold">
+                    <p className="mt-1 text-2xl font-bold break-words md:text-3xl">
                       {formatRupiah(Math.abs(result.hasil.pph_29_kurang_bayar))}
                     </p>
                   </div>

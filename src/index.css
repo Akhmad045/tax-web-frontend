@@ -92,6 +92,13 @@ body {
   @apply bg-slate-50 text-slate-800 antialiased;
 }
 
+/* Safe area bawah untuk BottomNav di HP (notch / gesture bar Android).
+   Unlayered CSS sengaja dipakai agar menang atas `py-3` dari Tailwind:
+   padding bawah = 0.75rem + inset perangkat, bukan sekadar inset. */
+.pb-safe {
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+}
+
 /* Tailwind v4 mengisi ::placeholder dengan color-mix(in oklab, ...).
    html2canvas tidak mendukung color-mix() sama sekali, jadi kita ganti
    dengan rgba() eksplisit. !important diperlukan karena aturan asli

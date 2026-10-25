@@ -245,7 +245,7 @@ export default function PPh21Bulanan() {
       <div className="app-ui space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">PPh 21 Bulanan</h1>
+          <h1 className="text-xl font-bold text-slate-800 md:text-2xl">PPh 21 Bulanan</h1>
           <p className="mt-1 text-sm text-slate-500 print:hidden">
             Hitung pemotongan PPh 21 pegawai tetap untuk satu bulan beserta Take Home Pay.
           </p>
@@ -432,7 +432,7 @@ export default function PPh21Bulanan() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? 'Menghitung…' : 'Hitung Pajak'}
               </button>
@@ -490,7 +490,7 @@ export default function PPh21Bulanan() {
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-sm text-blue-100">PPh 21 per Bulan</p>
-                    <p className="mt-1 text-3xl font-bold">
+                    <p className="mt-1 text-2xl font-bold break-words md:text-3xl">
                       {formatRupiah(pphBulanan)}
                     </p>
                   </div>
@@ -546,8 +546,8 @@ export default function PPh21Bulanan() {
                 </div>
 
                 {result.perhitungan_setahun.detail_tarif_progresif?.length > 0 && (
-                  <div className="mt-4 overflow-hidden rounded-xl border border-slate-100">
-                    <table className="w-full text-sm">
+                  <div className="mt-4 overflow-x-auto rounded-xl border border-slate-100">
+                    <table className="w-full min-w-[520px] text-sm">
                       <thead className="bg-slate-50 text-xs uppercase text-slate-500">
                         <tr>
                           <th className="px-3 py-2 text-left font-semibold">Lapisan</th>
