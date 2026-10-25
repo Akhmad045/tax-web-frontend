@@ -645,7 +645,7 @@ export default function PPh21Tahunan() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex-1 rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Menghitung…' : 'Hitung Pajak'}
             </button>
@@ -853,7 +853,7 @@ function QuickFill({ label, onApply }) {
       <button
         type="button"
         onClick={apply}
-        className="rounded bg-blue-600 px-1.5 py-0.5 text-xs font-medium text-white hover:bg-blue-700"
+        className="rounded bg-blue-600 px-1.5 py-0.5 text-xs font-medium text-white hover:bg-indigo-700"
       >
         OK
       </button>

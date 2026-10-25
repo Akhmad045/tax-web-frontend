@@ -25,7 +25,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navigasi utama mobile"
-      className="fixed bottom-0 z-50 flex w-full items-center justify-around border-t border-gray-200 bg-white py-3 pb-safe print:hidden md:hidden"
+      className="fixed bottom-0 z-50 flex w-full items-center justify-around border-t border-slate-200 bg-white py-3 pb-safe print:hidden md:hidden"
     >
       {tampil.map(({ to, label, icon: Icon, end }) => (
         <NavLink
@@ -35,7 +35,7 @@ export default function BottomNav() {
           className={({ isActive }) =>
             [
               'flex flex-col items-center gap-1 px-2 py-1 text-[11px] font-medium transition',
-              isActive ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600',
+              isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600',
             ].join(' ')
           }
         >

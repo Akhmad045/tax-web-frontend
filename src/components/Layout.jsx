@@ -24,8 +24,8 @@ const kelasNav = ({ isActive }) =>
   [
     'rounded-lg px-3 py-2 text-sm font-medium transition',
     isActive
-      ? 'bg-white text-blue-700 shadow'
-      : 'text-blue-100 hover:bg-blue-600 hover:text-white',
+      ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
   ].join(' ')
 
 export default function Layout({ children }) {
@@ -55,19 +55,19 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="bg-blue-700 shadow-lg">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-md">
         {/* Header khusus mobile: sapaan + profil/lonceng, bersih tanpa
             menu desktop yang berantakan. */}
         <div className="flex items-center justify-between px-4 py-3 md:hidden">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white">
               <User size={20} />
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">
+              <p className="text-sm font-semibold text-slate-800">
                 Halo, {isLoggedIn ? username || 'Admin' : 'selamat datang'}
               </p>
-              <p className="text-xs text-blue-200">
+              <p className="text-xs text-slate-500">
                 {isLoggedIn && isAdmin ? 'Admin · ' : ''}Kalkulator Pajak
               </p>
             </div>
@@ -75,7 +75,7 @@ export default function Layout({ children }) {
           <button
             type="button"
             aria-label="Notifikasi"
-            className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-500"
+            className="rounded-full bg-slate-100 p-2 text-slate-600 transition hover:bg-slate-200"
           >
             <Bell size={20} />
           </button>
@@ -84,12 +84,8 @@ export default function Layout({ children }) {
         {/* Header desktop: disembunyikan total di mobile. */}
         <div className="mx-auto hidden max-w-6xl px-6 py-4 md:flex md:flex-row md:items-center md:justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img
-              src="/mu-logo.png"
-              alt="MU Logo"
-              className="h-12 w-12 object-contain"
-            />
-            <span className="text-lg font-semibold text-white">
+            <div className="flex items-center justify-center w-10 h-10 bg-indigo-600 text-white font-extrabold text-sm rounded-xl tracking-wider">TM3</div>
+            <span className="text-lg font-semibold text-slate-800">
               Tim 3 Kalkulator Pajak
             </span>
           </Link>
@@ -109,11 +105,11 @@ export default function Layout({ children }) {
             </nav>
 
             {isLoggedIn ? (
-              <div className="flex items-center gap-2 border-l border-blue-500 pl-3">
-                <span className="hidden text-sm text-blue-100 sm:inline">
+              <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+                <span className="hidden text-sm text-slate-600 sm:inline">
                   {username}
                   {isAdmin && (
-                    <span className="ml-1.5 rounded-full bg-blue-500 px-2 py-0.5 text-xs font-semibold text-white">
+                    <span className="ml-1.5 rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white">
                       admin
                     </span>
                   )}
@@ -122,7 +118,7 @@ export default function Layout({ children }) {
                   type="button"
                   onClick={handleLogout}
                   title="Keluar dari akun"
-                  className="rounded-lg border border-red-300 bg-transparent px-3 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-600 hover:text-white hover:border-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                  className="rounded-lg border border-red-200 bg-transparent px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 hover:text-red-700 hover:border-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
                 >
                   Logout
                 </button>
@@ -130,7 +126,7 @@ export default function Layout({ children }) {
             ) : (
               <NavLink
                 to="/login"
-                className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-blue-700 shadow transition hover:bg-blue-50"
+                className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
               >
                 Masuk
               </NavLink>

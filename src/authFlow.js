@@ -20,7 +20,7 @@ const KUNCI = {
 
 /** Kelas Tailwind standar untuk input, agar konsisten di semua form auth. */
 export const inputKelas =
-  'w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
+  'w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100'
 
 /**
  * Simpan email untuk tahap berikutnya.

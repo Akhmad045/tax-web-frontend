@@ -66,11 +66,7 @@ export default function Login() {
     <div className="mx-auto flex max-w-md flex-col justify-center py-10">
       <div className="rounded-2xl bg-white p-8 shadow-lg ring-1 ring-slate-200">
         <div className="mb-6 text-center">
-          <img
-            src="/mu-logo.png"
-            alt="MU Logo"
-            className="mx-auto h-16 w-16 object-contain"
-          />
+          <div className="mx-auto flex items-center justify-center w-16 h-16 bg-indigo-600 text-white font-extrabold text-lg rounded-xl tracking-wider">TM3</div>
           <h1 className="mt-4 text-xl font-bold text-slate-800">Tim 3 Kalkulator Pajak</h1>
           <p className="mt-1 text-sm text-slate-500">
             Silakan masuk untuk menghitung pajak.
@@ -148,7 +144,7 @@ export default function Login() {
             </div>
             <Link
               to="/forgot-password"
-              className="mt-2 mb-4 block text-right text-sm text-blue-600 hover:text-blue-800 hover:underline"
+              className="mt-2 mb-4 block text-right text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
             >
               Lupa password?
             </Link>
@@ -157,7 +153,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? 'Memproses…' : 'Masuk'}
           </button>

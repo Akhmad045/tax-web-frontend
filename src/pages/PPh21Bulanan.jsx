@@ -432,7 +432,7 @@ export default function PPh21Bulanan() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? 'Menghitung…' : 'Hitung Pajak'}
               </button>

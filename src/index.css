@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
@@ -25,6 +26,20 @@
    sehingga tampilan visual aplikasi praktis tidak berubah.
    --------------------------------------------------------------------------- */
 @theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-system, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ---- indigo (tema fintech) ---- */
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-200: #c7d2fe;
+  --color-indigo-300: #a5b4fc;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-700: #4338ca;
+  --color-indigo-800: #3730a3;
+  --color-indigo-900: #312e81;
+
   /* ---- slate ---- */
   --color-slate-50: #f8fafc;
   --color-slate-100: #f1f5f9;
@@ -89,7 +104,7 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-800 antialiased;
+  @apply bg-slate-50 font-sans text-slate-800 antialiased;
 }
 
 /* Safe area bawah untuk BottomNav di HP (notch / gesture bar Android).
