@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 import Login from './Login'
@@ -102,6 +102,43 @@ function AdminRoute({ children }) {
   )
 }
 
+/**
+ * Deteksi perangkat mobile: lebar layar kecil, user agent mobile, atau
+ * aplikasi Capacitor (window.Capacitor ada di APK Android/iOS).
+ * Dipakai hanya untuk gerbang beranda mobile di bawah.
+ */
+function useIsMobile() {
+  const cekMobile = () => {
+    if (typeof window === 'undefined') return false
+    if (window.innerWidth <= 767) return true
+    if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '')) return true
+    return Boolean(window.Capacitor)
+  }
+  const [isMobile, setIsMobile] = useState(cekMobile)
+  useEffect(() => {
+    const perbarui = () => setIsMobile(cekMobile())
+    window.addEventListener('resize', perbarui)
+    return () => window.removeEventListener('resize', perbarui)
+  }, [])
+  return isMobile
+}
+
+/**
+ * Beranda: di HP, tamu yang belum login langsung dilempar ke /login
+ * (bukan ke Dashboard). Setelah login, tujuan kembali ke '/' sehingga
+ * user mobile yang sudah login tetap mendarat di Dashboard.
+ * Di desktop, perilaku lama dipertahankan: tamu masih bisa melihat
+ * Dashboard, modul kalkulator tetap dilindungi ProtectedRoute.
+ */
+function Beranda() {
+  const { isLoggedIn } = useAuth()
+  const isMobile = useIsMobile()
+  if (!isLoggedIn && isMobile) {
+    return <Navigate to="/login" replace state={{ from: '/' }} />
+  }
+  return <Dashboard />
+}
+
 /** Halaman 404 sederhana, tetap di dalam Layout. */
 function NotFound() {
   return (
@@ -182,7 +219,7 @@ export default function App() {
       */}
       <PemantauToken />
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Beranda />} />
         <Route
           path="/login"
           element={
