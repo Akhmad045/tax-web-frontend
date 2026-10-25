@@ -1,7 +1,5 @@
 import { formatRupiah, formatAngkaTabel } from '../utils/format'
 
-const PEMOTONG_NAMA = 'PT Apex City Indonesia'
-const PEMOTONG_NPWP = '01.234.567.8-901.000'
 
 const NAMA_BULAN = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',

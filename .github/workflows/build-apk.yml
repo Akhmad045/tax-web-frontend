@@ -28,6 +28,11 @@ jobs:
       run: npm run build
       env:
         VITE_API_URL: https://tax-web-api.onrender.com
+        # Identitas perusahaan untuk dokumen PDF. Nilai ini dibakar ke
+        # bundle saat build (Vite build-time env); fallback di
+        # src/utils/company.js sama dengan nilai di sini.
+        VITE_COMPANY_NAME: "PT Tim 3 Kalkulator Pajak"
+        VITE_COMPANY_NPWP: "01.234.567.8-901.000"
 
     - name: Setup Java JDK 21
       uses: actions/setup-java@v4

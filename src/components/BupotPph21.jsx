@@ -1,12 +1,11 @@
 import { formatRupiah, formatAngkaTabel } from '../utils/format'
+import { COMPANY_NAME, COMPANY_NPWP } from '../utils/company'
 
 const NAMA_BULAN = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
 ]
 
-const PEMOTONG_NAMA = 'PT Apex City Indonesia'
-const PEMOTONG_NPWP = '01.234.567.8-901.000'
 
 /**
  * Baris tabel rincian.
@@ -101,8 +100,8 @@ export default function BupotPph21({ form, result, nomorBukti, tanggal }) {
         <div className="bupot-section-title">A. BAGIAN UMUM</div>
         <table className="bupot-ident">
           <tbody>
-            <Identitas label="Nama Pemotong" nilai={PEMOTONG_NAMA} />
-            <Identitas label="NPWP Pemotong" nilai={PEMOTONG_NPWP} />
+            <Identitas label="Nama Pemotong" nilai={COMPANY_NAME} />
+            <Identitas label="NPWP Pemotong" nilai={COMPANY_NPWP} />
             <Identitas label="NIK/NPWP Penerima" nilai={form.nik} />
             <Identitas label="Nama Penerima" nilai={form.nama_karyawan} />
             <Identitas label="Status PTKP" nilai={result.status_ptkp || form.status_ptkp} />
@@ -163,8 +162,8 @@ export default function BupotPph21({ form, result, nomorBukti, tanggal }) {
           <div className="bupot-ttd-nama">Pemotong Pajak</div>
           <div className="bupot-meterai">[Meterai Elektronik]</div>
           <div className="bupot-ttd-garis" />
-          <div className="bupot-ttd-jabatan">{PEMOTONG_NAMA}</div>
-          <div className="bupot-ttd-npwp">NPWP: {PEMOTONG_NPWP}</div>
+          <div className="bupot-ttd-jabatan">{COMPANY_NAME}</div>
+          <div className="bupot-ttd-npwp">NPWP: {COMPANY_NPWP}</div>
         </div>
       </div>
     </div>

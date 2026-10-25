@@ -8,6 +8,7 @@ import Row from '../components/Row'
 import SimpanButton from '../components/SimpanButton'
 import { formatRupiah, parseNumber } from '../utils/format'
 import { exportElementToPdf } from '../utils/exportPdf'
+import { nomorBuktiBerikutnya } from '../utils/nomorBukti'
 import { pesanBackendMati, simpanPerhitungan } from '../utils/riwayat'
 import {
   bersihkanErrors,
@@ -19,14 +20,6 @@ import {
   validasiUangWajib,
 } from '../utils/validation'
 
-/** Nomor bukti pemotongan otomatis (format ala Coretax, dummy). */
-function buatNomorBukti() {
-  const now = new Date()
-  const yyyy = now.getFullYear()
-  const mm = String(now.getMonth() + 1).padStart(2, '0')
-  const acak = String(Math.floor(Math.random() * 900000) + 100000)
-  return `BPA1-${yyyy}${mm}-${acak}`
-}
 
 // PTKP: label + nilai.
 const PTKP_OPTIONS = [
@@ -63,7 +56,10 @@ export default function PPh21Bulanan() {
   const [error, setError] = useState('')
   const [errors, setErrors] = useState({})
   const [exporting, setExporting] = useState(false)
-  const [nomorBukti, setNomorBukti] = useState(buatNomorBukti)
+  // Nomor bukti diisi saat Hitung berhasil (lihat handleSubmit), bukan
+  // saat halaman dibuka — jadi nomor hanya terpakai untuk perhitungan
+  // yang benar-benar jadi dokumen. Sebelum Hitung pertama, nilainya ''.
+  const [nomorBukti, setNomorBukti] = useState('')
   const [menyimpan, setMenyimpan] = useState(false)
   const [tersimpan, setTersimpan] = useState(false)
 
@@ -191,6 +187,10 @@ export default function PPh21Bulanan() {
         status_ptkp: form.status_ptkp,
       }
       const { data } = await api.post('/api/pph21/bulanan', payload)
+      // Satu Hitung yang berhasil = satu nomor urut berikutnya. Nomor yang
+      // sama dipakai untuk Simpan & Export perhitungan ini (cetak ulang
+      // tidak mengubah nomor); Hitung berikutnya mendapat nomor baru.
+      setNomorBukti(nomorBuktiBerikutnya())
       setResult(data)
       setTersimpan(false)
     } catch (err) {

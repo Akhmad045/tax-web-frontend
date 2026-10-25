@@ -1,7 +1,6 @@
 import { formatRupiah, formatAngkaTabel } from '../utils/format'
+import { COMPANY_NAME, COMPANY_NPWP } from '../utils/company'
 
-const PEMOTONG_NAMA = 'PT Apex City Indonesia'
-const PEMOTONG_NPWP = '01.234.567.8-901.000'
 
 const NAMA_BULAN = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -90,10 +89,10 @@ export default function Form1721A1({
             <tr className="bupot-row">
               <td className="bupot-meta-label">Nama Pemotong</td>
               <td className="bupot-meta-sep">:</td>
-              <td className="bupot-meta-val">{PEMOTONG_NAMA}</td>
+              <td className="bupot-meta-val">{COMPANY_NAME}</td>
               <td className="bupot-meta-label bupot-meta-label-2">NPWP Pemotong</td>
               <td className="bupot-meta-sep">:</td>
-              <td className="bupot-meta-val">{PEMOTONG_NPWP}</td>
+              <td className="bupot-meta-val">{COMPANY_NPWP}</td>
             </tr>
           </tbody>
         </table>
@@ -181,8 +180,8 @@ export default function Form1721A1({
           <div className="bupot-ttd-nama">Pemotong Pajak</div>
           <div className="bupot-meterai">[Meterai Elektronik]</div>
           <div className="bupot-ttd-garis" />
-          <div className="bupot-ttd-jabatan">{PEMOTONG_NAMA}</div>
-          <div className="bupot-ttd-npwp">NPWP: {PEMOTONG_NPWP}</div>
+          <div className="bupot-ttd-jabatan">{COMPANY_NAME}</div>
+          <div className="bupot-ttd-npwp">NPWP: {COMPANY_NPWP}</div>
         </div>
       </div>
     </div>
