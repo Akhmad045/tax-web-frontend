@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Kalkulator Pajak</string>
-    <string name="title_activity_main">Kalkulator Pajak</string>
+    <string name="app_name">TaxEase</string>
+    <string name="title_activity_main">TaxEase</string>
     <string name="package_name">com.tim3.kalkulatorpajak</string>
     <string name="custom_url_scheme">com.tim3.kalkulatorpajak</string>
 </resources>

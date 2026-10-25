@@ -7,7 +7,7 @@
  * Navigasi menyesuaikan status login (conditional rendering dari
  * AuthContext.isLoggedIn, yang membaca token di localStorage):
  * - Belum login  : HANYA logo TM3 + tombol "Masuk" di kanan. Teks
- *   "Tim 3 Kalkulator Pajak" dan seluruh menu (Dashboard, PPh 21
+ *   "TaxEase" dan seluruh menu (Dashboard, PPh 21
  *   Bulanan, PPh 21 Tahunan, PPh Badan) disembunyikan.
  * - Login admin  : teks + menu tampil (termasuk Riwayat), tampil nama
  *   + tombol "Logout".
@@ -78,7 +78,7 @@ export default function Layout({ children }) {
                     Halo, {username || 'Admin'}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {isAdmin ? 'Admin · ' : ''}Kalkulator Pajak
+                    {isAdmin ? 'Admin · ' : ''}TaxEase
                   </p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function Layout({ children }) {
             <div className="flex items-center justify-center w-10 h-10 bg-indigo-600 text-white font-extrabold text-sm rounded-xl tracking-wider">TM3</div>
             {isLoggedIn && (
               <span className="text-lg font-semibold text-slate-800">
-                Tim 3 Kalkulator Pajak
+                TaxEase
               </span>
             )}
           </Link>

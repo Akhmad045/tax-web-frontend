@@ -1,6 +1,6 @@
 {
   "appId": "com.tim3.kalkulatorpajak",
-  "appName": "Kalkulator Pajak",
+  "appName": "TaxEase",
   "server": {
     "cleartext": true
   },

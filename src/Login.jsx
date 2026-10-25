@@ -67,7 +67,7 @@ export default function Login() {
       <div className="rounded-2xl bg-white p-8 shadow-lg ring-1 ring-slate-200">
         <div className="mb-6 text-center">
           <div className="mx-auto flex items-center justify-center w-16 h-16 bg-indigo-600 text-white font-extrabold text-lg rounded-xl tracking-wider">TM3</div>
-          <h1 className="mt-4 text-xl font-bold text-slate-800">Tim 3 Kalkulator Pajak</h1>
+          <h1 className="mt-4 text-xl font-bold text-slate-800">TaxEase</h1>
           <p className="mt-1 text-sm text-slate-500">
             Silakan masuk untuk menghitung pajak.
           </p>

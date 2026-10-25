@@ -116,7 +116,7 @@ export default function Dashboard() {
             Dipercaya oleh berbagai tim keuangan &amp; praktisi pajak
           </p>
           <h1 className="mt-6 max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
-            Kalkulator Pajak Terpadu untuk Profesional Modern.
+            TaxEase untuk Profesional Modern.
           </h1>
           <p className="mt-6 max-w-2xl text-base text-indigo-100 md:text-lg">
             Hitung PPh 21 &amp; PPh Badan secara akurat, otomatis, dan sesuai
@@ -216,7 +216,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <div className="rounded-2xl bg-gradient-to-r from-indigo-700 to-indigo-500 p-5 text-white shadow-lg md:p-8">
-        <h1 className="text-xl font-bold md:text-3xl">Dashboard Kalkulator Pajak</h1>
+        <h1 className="text-xl font-bold md:text-3xl">Dashboard TaxEase</h1>
         <p className="mt-2 max-w-2xl text-sm text-indigo-100 md:text-base">
           Pilih modul perhitungan pajak di bawah ini. Semua perhitungan dikirim ke
           backend FastAPI dan hasilnya ditampilkan secara rinci.
