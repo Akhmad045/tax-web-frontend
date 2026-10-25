@@ -47,8 +47,19 @@ export default function Register() {
       navigate('/verify-otp', { replace: true })
     } catch (err) {
       const status = err.response?.status
-      if (status === 409) {
-        setError(pesanGalatApi(err, 'Username atau email sudah terdaftar.'))
+      // Backend mengembalikan 400 untuk username/email yang sudah
+      // terdaftar (baik akun aktif maupun pendaftaran pending yang belum
+      // diverifikasi OTP). 409 tetap ditangani untuk kompatibilitas
+      // dengan backend lama. Pesan yang ditampilkan adalah detail dari
+      // backend (error.response.data.detail lewat pesanGalatApi), di
+      // kotak merah di bawah judul "Daftar Akun" — bukan alert.
+      if (status === 400 || status === 409) {
+        setError(
+          pesanGalatApi(
+            err,
+            'Username atau email sudah terdaftar. Silakan gunakan yang lain.',
+          ),
+        )
       } else if (status === 503) {
         setError('Server gagal mengirim email verifikasi. Coba lagi beberapa saat.')
       } else {
