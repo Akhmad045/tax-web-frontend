@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Building2, Calculator, FileDown, FileText, History } from 'lucide-react'
+import { ArrowRight, Building2, Calculator, FileDown, FileText, History, Quote } from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import api from '../api/client'
 import { formatRupiah } from '../utils/format'
@@ -90,12 +90,16 @@ const testimoni = [
   {
     kutipan:
       'Perhitungan PPh 21 bulanan yang dulu memakan waktu berjam-jam kini selesai dalam hitungan menit, dan angkanya selalu cocok dengan rekonsiliasi kami.',
-    peran: 'Praktisi Pajak',
+    nama: 'Praktisi Pajak Senior',
+    jabatan: 'Konsultan Pajak Independen',
+    inisial: 'P',
   },
   {
     kutipan:
       'Export PDF-nya rapi dan riwayatnya mudah ditelusuri. Tim keuangan kami tidak lagi mengulang hitung yang sama setiap bulan.',
-    peran: 'Tim Keuangan',
+    nama: 'Tim Keuangan',
+    jabatan: 'PT Maju Bersama',
+    inisial: 'T',
   },
 ]
 
@@ -212,16 +216,26 @@ export default function Dashboard() {
           <h2 className="text-center text-4xl font-bold tracking-tight text-slate-900 md:text-6xl">
             Dipercaya Para Profesional
           </h2>
-          <div className="mx-auto mt-12 grid max-w-4xl gap-4 md:grid-cols-2">
-            {testimoni.map(({ kutipan, peran }) => (
-              <Card key={peran} className="transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-                <p className="text-sm leading-relaxed text-slate-700 md:text-base">
+          <div className="mx-auto mt-12 grid max-w-4xl gap-8 md:grid-cols-2">
+            {testimoni.map(({ kutipan, nama, jabatan, inisial }) => (
+              <div
+                key={nama}
+                className="relative flex h-full flex-col justify-between bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all"
+              >
+                <Quote className="text-indigo-100 w-12 h-12 absolute top-6 right-6" />
+                <p className="text-slate-700 leading-relaxed mb-6">
                   &ldquo;{kutipan}&rdquo;
                 </p>
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-indigo-600">
-                  — {peran}
-                </p>
-              </Card>
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">
+                    {inisial}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900">{nama}</p>
+                    <p className="text-sm text-slate-500">{jabatan}</p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </section>
