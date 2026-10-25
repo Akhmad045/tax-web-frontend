@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Calculator, FileDown, History } from 'lucide-react'
+import { ArrowRight, Building2, Calculator, FileDown, FileText, History } from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import Card from '../components/Card'
 
@@ -8,25 +8,25 @@ const modules = [
     to: '/pph21-bulanan',
     title: 'PPh 21 Bulanan',
     desc: 'Hitung pemotongan PPh 21 pegawai tetap untuk satu bulan beserta Take Home Pay.',
-    icon: '📅',
+    icon: Calculator,
   },
   {
     to: '/pph21-tahunan',
     title: 'PPh 21 Tahunan',
     desc: 'Rekap 12 bulan, biaya jabatan, PTKP, dan status Kurang/Lebih bayar.',
-    icon: '🗓️',
+    icon: FileText,
   },
   {
     to: '/pph-badan',
     title: 'PPh Badan',
     desc: 'Hitung PPh Badan (PPh 29) dengan fasilitas Pasal 31E.',
-    icon: '🏢',
+    icon: Building2,
   },
   {
     to: '/riwayat',
     title: 'Riwayat Perhitungan',
     desc: 'Lihat, telusuri detail, dan kelola seluruh perhitungan yang sudah disimpan.',
-    icon: '🗂️',
+    icon: History,
     // Hanya dirender untuk admin. Guest & role "user" tidak melihat card ini
     // sama sekali (bukan sekadar disabled).
     adminOnly: true,
@@ -97,7 +97,7 @@ const testimoni = [
 ]
 
 export default function Dashboard() {
-  const { isAdmin, isLoggedIn } = useAuth()
+  const { isAdmin, isLoggedIn, username } = useAuth()
 
   const tampil = modules.filter((m) => !m.adminOnly || isAdmin)
 
@@ -219,43 +219,57 @@ export default function Dashboard() {
     )
   }
 
+  // DASHBOARD LOGIN (layout premium): banner biru "Dashboard TaxEase"
+  // dihapus, diganti header sambutan + quick stats + grid modul.
+  // Angka "Total Perhitungan: 12" adalah dummy sesuai permintaan desain
+  // (bukan hitungan riwayat nyata — endpoint riwayat hanya untuk admin).
+  const quickStats = [
+    { label: 'Total Perhitungan', nilai: '12' },
+    { label: 'Status Akun', nilai: 'Aktif' },
+    { label: 'Sistem', nilai: 'Online' },
+  ]
+
   return (
     <div className="space-y-8">
-      <div className="rounded-2xl bg-gradient-to-r from-indigo-700 to-indigo-500 p-5 text-white shadow-lg md:p-8">
-        <h1 className="text-xl font-bold md:text-3xl">Dashboard TaxEase</h1>
-        <p className="mt-2 max-w-2xl text-sm text-indigo-100 md:text-base">
-          Pilih modul perhitungan pajak di bawah ini. Semua perhitungan dikirim ke
-          backend FastAPI dan hasilnya ditampilkan secara rinci.
+      <div className="animate-fadeInUp">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
+          Selamat datang kembali, {username || 'Admin'}!
+        </h1>
+        <p className="mt-2 text-slate-500">
+          Berikut adalah ringkasan aktivitas perpajakan Anda hari ini.
         </p>
       </div>
 
-      {/*
-        Layout adaptif mengikuti jumlah card yang terlihat:
-        - Mobile: selalu 2 kolom (gaya aplikasi fintech), font diperkecil.
-        - Guest / user (3 card): 2 -> 2 -> 3, sehingga baris terakhir
-          selalu terisi penuh dan tidak ada card menggantung.
-        - Admin (4 card)       : 2 -> 2 -> 4, tampil memanjang ke kanan.
-        Container dibatasi `max-w-5xl` + `mx-auto` agar grid tetap di tengah
-        dan tidak melebar berlebihan di layar ultrawide.
-      */}
+      <div className="animate-fadeInUp grid gap-4 sm:grid-cols-3" style={{ animationDelay: '100ms' }}>
+        {quickStats.map((s) => (
+          <div
+            key={s.label}
+            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4"
+          >
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              {s.label}
+            </p>
+            <p className="mt-1 text-xl font-bold text-slate-900">{s.nilai}</p>
+          </div>
+        ))}
+      </div>
+
       <div
-        className={`mx-auto grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-2 md:gap-5 ${
-          isAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
-        }`}
+        className="animate-fadeInUp grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8"
+        style={{ animationDelay: '200ms' }}
       >
-        {tampil.map((m) => (
-          <Link key={m.to} to={m.to} className="group h-full w-full">
-            <Card className="flex h-full flex-col transition group-hover:-translate-y-1 group-hover:border-indigo-200 group-hover:shadow-md">
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-xl md:h-12 md:w-12 md:text-2xl">
-                {m.icon}
+        {tampil.map(({ to, title, desc, icon: Icon }) => (
+          <Link key={to} to={to} className="group h-full w-full">
+            <div className="flex h-full flex-col bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6">
+              <div className="bg-indigo-50 text-indigo-600 p-3 rounded-xl mb-4 inline-block self-start">
+                <Icon size={24} />
               </div>
-              <h3 className="text-sm font-semibold text-slate-800 md:text-base">{m.title}</h3>
-              <p className="mt-1 text-xs text-slate-500 md:text-sm">{m.desc}</p>
-              {/* mt-auto mendorong link ke dasar card agar sejajar antar card. */}
-              <span className="mt-auto inline-block pt-3 text-xs font-medium text-indigo-600 group-hover:underline md:pt-4 md:text-sm">
-                Buka modul →
+              <h3 className="text-base font-semibold text-slate-800">{title}</h3>
+              <p className="mt-1 text-sm text-slate-500">{desc}</p>
+              <span className="text-indigo-600 font-semibold flex items-center gap-1 hover:gap-2 transition-all mt-4">
+                Buka modul <ArrowRight size={16} />
               </span>
-            </Card>
+            </div>
           </Link>
         ))}
       </div>
