@@ -35,12 +35,16 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-
-    # Must match compileSdkVersion / targetSdkVersion in android/variables.gradle (36).
+    # Do NOT use android-actions/setup-android@v3 here: that step
+    # failed on ubuntu-latest in runs 40160550874, 40161736567 and
+    # 40161985013 and caused all later steps to be skipped.
+    # ubuntu-latest already ships an Android SDK, so just use it
+    # and install the packages this project actually needs.
     - name: Install Android SDK Components
       run: |
+        echo "ANDROID_HOME=$ANDROID_HOME"
+        export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+        yes | sdkmanager --licenses
         sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
     - name: Capacitor Sync
