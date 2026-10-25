@@ -1,8 +1,1 @@
-{
-  "appId": "com.tim3.kalkulatorpajak",
-  "appName": "TaxEase",
-  "server": {
-    "cleartext": true
-  },
-  "webDir": "dist"
-}
+{"android":{"allowMixedContent":false},"appId":"com.tim3.kalkulatorpajak","appName":"TaxEase","server":{"cleartext":false},"webDir":"dist"}
