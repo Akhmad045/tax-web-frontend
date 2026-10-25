@@ -254,21 +254,30 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div
-        className="animate-fadeInUp grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8"
-        style={{ animationDelay: '200ms' }}
-      >
-        {tampil.map(({ to, title, desc, icon: Icon }) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        {tampil.map(({ to, title, desc, icon: Icon }, i) => (
           <Link key={to} to={to} className="group h-full w-full">
-            <div className="flex h-full flex-col bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6">
-              <div className="bg-indigo-50 text-indigo-600 p-3 rounded-xl mb-4 inline-block self-start">
-                <Icon size={24} />
+            {/*
+              fadeInUp diletakkan di wrapper (bukan di card itu sendiri):
+              animasi dengan fill "both" akan menimpa transform hover
+              (-translate-y-2) bila ditempel langsung di card. Wrapper
+              menganimasikan kemunculan, card di dalamnya bebas hover.
+              Delay bertahap 100ms per card agar muncul berurutan.
+            */}
+            <div
+              className="animate-fadeInUp h-full"
+              style={{ animationDelay: `${200 + i * 100}ms` }}
+            >
+              <div className="group flex h-full flex-col bg-white rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl hover:border-indigo-300 p-6">
+                <div className="bg-indigo-50 text-indigo-600 p-3 rounded-xl mb-4 inline-block self-start transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                  <Icon size={24} />
+                </div>
+                <h3 className="text-base font-semibold text-slate-800">{title}</h3>
+                <p className="mt-1 text-sm text-slate-500">{desc}</p>
+                <span className="mt-auto pt-4 flex items-center gap-1 text-indigo-600 font-semibold transition-all duration-300 group-hover:text-indigo-800 group-hover:translate-x-1">
+                  Buka modul <ArrowRight size={16} />
+                </span>
               </div>
-              <h3 className="text-base font-semibold text-slate-800">{title}</h3>
-              <p className="mt-1 text-sm text-slate-500">{desc}</p>
-              <span className="text-indigo-600 font-semibold flex items-center gap-1 hover:gap-2 transition-all mt-4">
-                Buka modul <ArrowRight size={16} />
-              </span>
             </div>
           </Link>
         ))}
