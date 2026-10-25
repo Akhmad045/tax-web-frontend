@@ -88,6 +88,16 @@ export default function PPh21Bulanan() {
 
   const setField = (key) => (value) => {
     setForm((f) => ({ ...f, [key]: value }))
+    // Hasil lama TIDAK BOLEH bertahan setelah input diubah: dokumen Bupot
+    // mencampur input form (NIK/nama/tunjangan tetap & tidak tetap) dengan
+    // angka `result` dari perhitungan sebelumnya. Bila user mengubah
+    // tunjangan lalu langsung Export tanpa Hitung ulang, PDF akan
+    // menampilkan tunjangan baru dengan bruto/PPh lama (tidak konsisten).
+    // Karena itu setiap perubahan input menghapus hasil & status simpan,
+    // sehingga user wajib Hitung ulang — tombol hasil/Export/Simpan
+    // memang hanya dirender saat `result` ada.
+    setResult(null)
+    setTersimpan(false)
     // Hapus pesan error field ini begitu user mulai memperbaiki.
     setErrors((prev) => {
       if (!prev[key]) return prev
@@ -125,16 +135,22 @@ export default function PPh21Bulanan() {
   }
 
   /**
-   * Nilai PPh 21 per bulan dan Take Home Pay.
-   * Dihitung eksplisit dari hasil backend dengan rumus:
-   *   pphBulanan  = totalPphSetahun / 12
-   *   takeHomePay = netoBulanan - pphBulanan
-   * Tidak ada pengali 100 di sini.
+   * Nilai PPh 21 per bulan dan Take Home Pay: diambil LANGSUNG dari
+   * `hasil` respons API (sudah dibulatkan HALF_UP 2 desimal di backend),
+   * BUKAN dihitung ulang di frontend. Hitung ulang (totalPph/12 tanpa
+   * pembulatan) bisa meleset sepersekian rupiah dari nilai API — misalnya
+   * kasus 30jt+5jt: API 4.654.166,67 vs hitung ulang 4.654.166,6667 —
+   * dan selisih itu ikut terbawa ke ringkasan riwayat (total_pph).
+   * Fallback ke rumus lama hanya bila `hasil` tidak ada (respons lama).
    */
   const totalPphSetahun = Number(result?.perhitungan_setahun?.pph_setahun ?? 0)
   const netoBulanan = Number(result?.perhitungan_bulanan?.neto ?? 0)
-  const pphBulanan = result ? totalPphSetahun / 12 : 0
-  const takeHomePay = result ? netoBulanan - pphBulanan : 0
+  const pphBulanan = result
+    ? Number(result.hasil?.pph21_per_bulan ?? totalPphSetahun / 12)
+    : 0
+  const takeHomePay = result
+    ? Number(result.hasil?.take_home_pay ?? netoBulanan - pphBulanan)
+    : 0
 
   const handleSubmit = async (e) => {
     e.preventDefault()
