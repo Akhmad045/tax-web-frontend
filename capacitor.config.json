@@ -1,5 +1,8 @@
 {
   "appId": "com.tim3.kalkulatorpajak",
   "appName": "Kalkulator Pajak",
+  "server": {
+    "cleartext": true
+  },
   "webDir": "dist"
 }
