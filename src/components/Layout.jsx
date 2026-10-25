@@ -164,9 +164,14 @@ export default function Layout({ children }) {
             </>
           ) : (
             <>
-              <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
-                <LogoZap size={40} />
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
+                  <LogoZap size={40} />
+                </span>
+                <span className="text-lg font-semibold text-slate-800">
+                  TaxEase
+                </span>
+              </div>
               <NavLink
                 to="/login"
                 className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
@@ -183,11 +188,9 @@ export default function Layout({ children }) {
             <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
               <LogoZap size={40} />
             </span>
-            {isLoggedIn && (
-              <span className="text-lg font-semibold text-slate-800">
-                TaxEase
-              </span>
-            )}
+            <span className="text-lg font-semibold text-slate-800">
+              TaxEase
+            </span>
           </Link>
 
           <div className="flex flex-wrap items-center gap-3">
