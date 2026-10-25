@@ -32,10 +32,11 @@ const navItems = [
 
 const kelasNav = ({ isActive }) =>
   [
-    'rounded-lg px-3 py-2 text-sm font-medium transition',
+    'relative px-3 py-2 text-sm font-medium transition-colors duration-300',
+    'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:transition-transform after:duration-300 after:origin-left',
     isActive
-      ? 'bg-indigo-50 text-indigo-700 shadow-sm'
-      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+      ? 'text-indigo-600 after:scale-x-100'
+      : 'text-slate-600 hover:text-indigo-600 after:scale-x-0 hover:after:scale-x-100',
   ].join(' ')
 
 
@@ -77,14 +78,18 @@ function UserDropdown({ username, role, onLogout }) {
         aria-haspopup="menu"
         aria-expanded={isDropdownOpen}
         aria-label="Menu profil"
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 p-2 font-bold text-indigo-600 transition hover:bg-indigo-100 cursor-pointer"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 p-2 font-bold text-indigo-600 transition-all duration-300 hover:bg-indigo-100 hover:scale-105 hover:shadow-md active:scale-95 cursor-pointer"
       >
         {inisial}
       </button>
-      {isDropdownOpen && (
-        <div
+      <div
           role="menu"
-          className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2"
+          aria-hidden={!isDropdownOpen}
+          className={`absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2 ${
+            isDropdownOpen
+              ? 'origin-top-right transform scale-100 opacity-100 transition-all duration-200 ease-out'
+              : 'origin-top-right transform scale-95 opacity-0 pointer-events-none transition-all duration-200 ease-in'
+          }`}
         >
           <div className="px-2 py-1.5">
             <p className="truncate font-bold text-slate-800">
@@ -97,6 +102,7 @@ function UserDropdown({ username, role, onLogout }) {
           <div className="border-t border-slate-100 my-2" />
           <button
             type="button"
+            tabIndex={isDropdownOpen ? 0 : -1}
             onClick={onLogout}
             className="flex w-full items-center gap-2 rounded-lg p-2 text-left text-red-600 transition hover:bg-red-50"
           >
@@ -104,7 +110,6 @@ function UserDropdown({ username, role, onLogout }) {
             Logout
           </button>
         </div>
-      )}
     </div>
   )
 }
@@ -136,7 +141,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-md">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300">
         {/* Header khusus mobile: sapaan + profil/lonceng, bersih tanpa
             menu desktop yang berantakan. Tamu: hanya logo petir + Masuk. */}
         <div className="flex items-center justify-between px-4 py-3 md:hidden">
@@ -159,7 +164,9 @@ export default function Layout({ children }) {
             </>
           ) : (
             <>
-              <LogoZap size={40} />
+              <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
+                <LogoZap size={40} />
+              </span>
               <NavLink
                 to="/login"
                 className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
@@ -173,7 +180,9 @@ export default function Layout({ children }) {
         {/* Header desktop: disembunyikan total di mobile. */}
         <div className="mx-auto hidden max-w-6xl px-6 py-4 md:flex md:flex-row md:items-center md:justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <LogoZap size={40} />
+            <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
+              <LogoZap size={40} />
+            </span>
             {isLoggedIn && (
               <span className="text-lg font-semibold text-slate-800">
                 TaxEase
