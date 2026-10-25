@@ -16,27 +16,46 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { LogOut, User } from 'lucide-react'
+import {
+  Building2,
+  CalendarDays,
+  Calculator,
+  History,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  User,
+} from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import BottomNav from './BottomNav'
 import LogoZap from './LogoZap'
 
 const navItems = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/pph21-bulanan', label: 'PPh 21 Bulanan' },
-  { to: '/pph21-tahunan', label: 'PPh 21 Tahunan' },
-  { to: '/pph-badan', label: 'PPh Badan' },
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/pph21-bulanan', label: 'PPh 21 Bulanan', icon: Calculator },
+  { to: '/pph21-tahunan', label: 'PPh 21 Tahunan', icon: CalendarDays },
+  { to: '/pph-badan', label: 'PPh Badan', icon: Building2 },
   // Riwayat ditandai adminOnly; difilter di bawah sesuai role.
-  { to: '/riwayat', label: 'Riwayat', adminOnly: true },
+  { to: '/riwayat', label: 'Riwayat', icon: History, adminOnly: true },
 ]
 
 const kelasNav = ({ isActive }) =>
   [
-    'relative px-3 py-2 text-sm font-medium transition-colors duration-300',
+    'relative flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-300',
     'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:transition-transform after:duration-300 after:origin-left',
     isActive
       ? 'text-indigo-600 after:scale-x-100'
       : 'text-slate-600 hover:text-indigo-600 after:scale-x-0 hover:after:scale-x-100',
+  ].join(' ')
+
+// Link panel hamburger mobile: blok penuh dengan ikon + teks, warna
+// aktif senada menu desktop (tanpa underline animasi).
+const kelasNavMobile = ({ isActive }) =>
+  [
+    'flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors',
+    isActive
+      ? 'bg-indigo-50 text-indigo-600'
+      : 'text-slate-700 hover:bg-slate-50 hover:text-indigo-600',
   ].join(' ')
 
 
@@ -117,6 +136,9 @@ function UserDropdown({ username, role, onLogout }) {
 export default function Layout({ children }) {
   const { isLoggedIn, isAdmin, username, role, logout } = useAuth()
   const navigate = useNavigate()
+  // Panel hamburger mobile: dibuka/tutup lewat tombol Menu di header
+  // mobile, dan otomatis tertutup saat salah satu link diklik.
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const tampilNav = navItems.filter((item) => !item.adminOnly || isAdmin)
 
@@ -170,7 +192,18 @@ export default function Layout({ children }) {
                   </p>
                 </div>
               </div>
-              <UserDropdown username={username} role={role} onLogout={handleLogout} />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen((buka) => !buka)}
+                  aria-label="Menu navigasi"
+                  aria-expanded={isMobileMenuOpen}
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 transition hover:bg-slate-100 active:scale-95 md:hidden"
+                >
+                  <Menu size={22} />
+                </button>
+                <UserDropdown username={username} role={role} onLogout={handleLogout} />
+              </div>
             </>
           ) : (
             <>
@@ -206,16 +239,20 @@ export default function Layout({ children }) {
           <div className="flex flex-wrap items-center gap-3">
             {isLoggedIn && (
               <nav className="flex flex-wrap gap-1">
-                {tampilNav.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.to === '/'}
-                    className={kelasNav}
-                  >
-                    {item.label}
-                  </NavLink>
-                ))}
+                {tampilNav.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      end={item.to === '/'}
+                      className={kelasNav}
+                    >
+                      <Icon size={16} />
+                      {item.label}
+                    </NavLink>
+                  )
+                })}
               </nav>
             )}
 
@@ -233,6 +270,40 @@ export default function Layout({ children }) {
             )}
           </div>
         </div>
+
+        {/* Panel hamburger mobile: daftar link yang sama dengan ikon,
+            hanya untuk user login (menu memang login-only). Header itu
+            sticky sehingga panel absolute top-full menempel tepat di
+            bawah navbar. Panel selalu ter-mount saat login agar
+            transition-all benar-benar berjalan (bukan sekadar muncul);
+            saat tertutup ia tak terlihat dan tak bisa diklik. */}
+        {isLoggedIn && (
+          <nav
+            aria-hidden={!isMobileMenuOpen}
+            className={`md:hidden absolute top-full left-0 w-full bg-white border-b border-slate-200 shadow-lg z-40 transition-all duration-300 ${
+              isMobileMenuOpen
+                ? 'translate-y-0 opacity-100'
+                : 'pointer-events-none -translate-y-2 opacity-0'
+            }`}
+          >
+            {tampilNav.map((item) => {
+              const Icon = item.icon
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  className={kelasNavMobile}
+                  tabIndex={isMobileMenuOpen ? 0 : -1}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Icon size={18} />
+                  {item.label}
+                </NavLink>
+              )
+            })}
+          </nav>
+        )}
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 md:px-6 md:py-8 md:pb-8">
