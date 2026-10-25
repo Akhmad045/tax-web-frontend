@@ -158,7 +158,16 @@ export async function exportElementToPdf(element, filename = 'laporan-pajak') {
   // `width`/`height` yang dipaksa lebih kecil membuat html2canvas memotong
   // kanan/bawah (PDF terpotong); nilai 0 membuat kanvas kosong. Karena itu
   // lebar jendela tiruan juga dihitung dari ukuran elemen, bukan angka tetap.
-  const lebarSnapshot = Math.max(1, Math.ceil(ukuran.width))
+  //
+  // TAMBAHAN (perbaikan teks terpotong di tepi kanan): html2canvas
+  // merender teks dengan metrik glifnya sendiri, yang bisa meleset
+  // beberapa piksel dari layout CSS. Bila kanvas TEPAT selebar elemen,
+  // glif paling kanan (digit terakhir kolom Jumlah) terpotong di tepi
+  // kanvas — inilah yang terlihat pada Bupot bulanan/tahunan/badan.
+  // Kanvas dilebihkan 32px ke kanan (area putih kosong, tidak mengubah
+  // isi) dan jendela tiruan dilebihkan 72px, sehingga tidak ada lagi glif
+  // yang berimpit dengan tepi kanvas.
+  const lebarSnapshot = Math.max(1, Math.ceil(ukuran.width) + 32)
   const tinggiSnapshot = Math.max(1, Math.ceil(ukuran.height))
 
   try {
@@ -178,7 +187,7 @@ export async function exportElementToPdf(element, filename = 'laporan-pajak') {
           height: tinggiSnapshot,
           // Jendela tiruan minimal selebar konten (+ruang margin) agar layout
           // responsif tidak menyusut dan memotong kolom tabel di kanan.
-          windowWidth: Math.max(800, lebarSnapshot + 40),
+          windowWidth: Math.max(800, lebarSnapshot + 72),
           windowHeight: Math.max(600, tinggiSnapshot),
           scrollX: 0,
           scrollY: 0,

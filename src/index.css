@@ -269,9 +269,13 @@ textarea::placeholder {
   left: auto;
   top: auto;
   width: auto;
-  /* Ruang napas di bawah kertas agar footer/tanda tangan tidak terpotong
-     saat html2canvas mengambil snapshot. */
-  padding-bottom: 80px;
+  /* Ruang napas di sekeliling kertas: bawah 80px agar footer/tanda tangan
+     tidak terpotong, kiri/kanan 12px agar tabel tidak menempel persis di
+     tepi kanvas — html2canvas merender glif dengan metriknya sendiri yang
+     bisa meleset beberapa piksel dari layout CSS, dan glif paling kanan
+     (digit terakhir kolom Jumlah) adalah korban pertama bila tepi tabel
+     berimpit dengan tepi kanvas. */
+  padding: 0 12px 80px 12px;
 }
 
 .bupot-offscreen {
@@ -321,8 +325,10 @@ textarea::placeholder {
   border-color: #666666 !important;
 }
 
-/* Dokumen formal: hitam-putih, latar putih, tipografi sans yang sama
-   dengan aplikasi (bukan serif) agar hasil PDF terasa satu produk. */
+/* Dokumen formal: hitam-putih, latar putih, tipografi profesional
+   (Arial/Helvetica — standar dokumen resmi, lebih ramping daripada font
+   aplikasi sehingga angka lebih lega di kolom). Layar aplikasi tetap
+   memakai Plus Jakarta Sans; hanya dokumen bukti yang memakai stack ini. */
 .bupot-root,
 .bupot-root * {
   color: #000000;
@@ -373,7 +379,7 @@ textarea::placeholder {
 .bupot-root {
   color: #000000;
   background: #ffffff;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, 'Liberation Sans', sans-serif;
   font-size: 10pt;
   line-height: 1.5;
 }
@@ -473,11 +479,11 @@ textarea::placeholder {
   font-weight: 700;
 }
 .bupot-th-kode {
-  width: 17%;
+  width: 15%;
 }
 .bupot-th-angka {
   text-align: right;
-  width: 26%;
+  width: 28%;
 }
 .bupot-th-no,
 .bupot-td-no {
@@ -498,6 +504,12 @@ textarea::placeholder {
   text-align: right;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+}
+/* Header & sel angka: padding kanan ekstra agar digit terakhir selalu
+   punya jarak dari garis tepi (lihat penjelasan di atas). */
+.bupot-th-angka,
+.bupot-td-angka {
+  padding-right: 14px;
 }
 .bupot-highlight {
   -webkit-print-color-adjust: exact;
