@@ -6,8 +6,8 @@
  *
  * Navigasi menyesuaikan status login (conditional rendering dari
  * AuthContext.isLoggedIn, yang membaca token di localStorage):
- * - Belum login  : HANYA logo petir + tombol "Masuk" di kanan. Teks
- *   "TaxEase" dan seluruh menu (Dashboard, PPh 21
+ * - Belum login  : logo petir + teks "TaxEase" selalu tampil, dan
+ *   HANYA tombol "Masuk" di kanan. Seluruh menu (Dashboard, PPh 21
  *   Bulanan, PPh 21 Tahunan, PPh Badan) disembunyikan.
  * - Login admin  : teks + menu tampil (termasuk Riwayat), profil lewat
  *   dropdown (nama + role + Logout).
@@ -68,7 +68,7 @@ function UserDropdown({ username, role, onLogout }) {
     }
   }, [isDropdownOpen])
 
-  const inisial = (username || 'A').trim().charAt(0).toUpperCase()
+  const inisial = (username || 'Pengguna').trim().charAt(0).toUpperCase()
 
   return (
     <div ref={ref} className="relative">
@@ -93,7 +93,7 @@ function UserDropdown({ username, role, onLogout }) {
         >
           <div className="px-2 py-1.5">
             <p className="truncate font-bold text-slate-800">
-              {username || 'Admin'}
+              {username || 'Pengguna'}
             </p>
             <p className="text-xs text-indigo-600 capitalize">
               {role || 'user'}
@@ -153,7 +153,7 @@ export default function Layout({ children }) {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-800">
-                    Halo, {username || 'Admin'}
+                    Halo, {username || 'Pengguna'}
                   </p>
                   <p className="text-xs text-slate-500">
                     {isAdmin ? 'Admin · ' : ''}TaxEase

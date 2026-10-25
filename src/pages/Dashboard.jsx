@@ -233,7 +233,7 @@ export default function Dashboard() {
     <div className="space-y-8">
       <div className="animate-fadeInUp">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
-          Selamat datang kembali, {username || 'Admin'}!
+          Selamat datang kembali, {username || 'Pengguna'}!
         </h1>
         <p className="mt-2 text-slate-500">
           Berikut adalah ringkasan aktivitas perpajakan Anda hari ini.
@@ -254,7 +254,21 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+      {/*
+        Grid menyesuaikan role agar tidak ada kolom kosong/orphan:
+        - Admin (4 card): 2 kolom di md, 4 kolom di lg (2x2 -> 1 baris).
+        - User (3 card): 3 kolom mulai md, jadi tidak ada sisa 1 kolom
+          kosong di kanan (grid 4 kolom) atau 1 card sendirian di baris
+          kedua (grid 2 kolom). Sebelumnya grid ini tetap 4 kolom untuk
+          semua role sehingga dashboard user tampak melar/berlubang.
+      */}
+      <div
+        className={
+          isAdmin
+            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8'
+            : 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-8'
+        }
+      >
         {tampil.map(({ to, title, desc, icon: Icon }, i) => (
           <Link key={to} to={to} className="group h-full w-full">
             {/*
