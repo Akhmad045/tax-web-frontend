@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Building2, Calculator, FileDown, FileText, History } from 'lucide-react'
 import { useAuth } from '../AuthContext'
+import api from '../api/client'
+import { formatRupiah } from '../utils/format'
 import Card from '../components/Card'
 
 const modules = [
@@ -97,9 +100,32 @@ const testimoni = [
 ]
 
 export default function Dashboard() {
-  const { isAdmin, isLoggedIn, username } = useAuth()
+  const { isAdmin, isLoggedIn, username, role } = useAuth()
 
   const tampil = modules.filter((m) => !m.adminOnly || isAdmin)
+
+  // Quick Stats REAL-TIME dari database (bukan lagi angka dummy 12).
+  // Diambil dari endpoint khusus /api/dashboard-statistik — BUKAN dari
+  // /api/riwayat — karena endpoint riwayat hanya untuk admin (user biasa
+  // mendapat 403). Aturan endpoint: admin melihat agregat global, user
+  // melihat agregat miliknya sendiri. `stats === null` berarti masih
+  // memuat; bila fetch gagal, fallback ke 0 agar dashboard tetap tampil.
+  const [stats, setStats] = useState(null)
+  useEffect(() => {
+    if (!isLoggedIn) return
+    let batal = false
+    api
+      .get('/api/dashboard-statistik')
+      .then((res) => {
+        if (!batal) setStats(res.data)
+      })
+      .catch(() => {
+        if (!batal) setStats({ total: 0, total_nominal_pajak: 0 })
+      })
+    return () => {
+      batal = true
+    }
+  }, [isLoggedIn])
 
   // LANDING PAGE GUEST (gaya premium Zorven): tamu yang belum login
   // tidak melihat card kalkulator sama sekali.
@@ -221,12 +247,21 @@ export default function Dashboard() {
 
   // DASHBOARD LOGIN (layout premium): banner biru "Dashboard TaxEase"
   // dihapus, diganti header sambutan + quick stats + grid modul.
-  // Angka "Total Perhitungan: 12" adalah dummy sesuai permintaan desain
-  // (bukan hitungan riwayat nyata — endpoint riwayat hanya untuk admin).
+  // Quick Stats kini real-time dari database (lihat useEffect di atas):
+  // total = jumlah baris riwayat, total nominal = SUM total_pph.
+  const peran = role ? role.charAt(0).toUpperCase() + role.slice(1) : isAdmin ? 'Admin' : 'User'
   const quickStats = [
-    { label: 'Total Perhitungan', nilai: '12' },
-    { label: 'Status Akun', nilai: 'Aktif' },
-    { label: 'Sistem', nilai: 'Online' },
+    {
+      label: 'Total Perhitungan',
+      nilai: stats ? String(stats.total ?? 0) : 'Memuat...',
+      memuat: stats === null,
+    },
+    { label: 'Role Akun', nilai: peran, memuat: false },
+    {
+      label: 'Total Pajak Dihitung',
+      nilai: stats ? formatRupiah(stats.total_nominal_pajak ?? 0) : 'Memuat...',
+      memuat: stats === null,
+    },
   ]
 
   return (
@@ -249,7 +284,13 @@ export default function Dashboard() {
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
               {s.label}
             </p>
-            <p className="mt-1 text-xl font-bold text-slate-900">{s.nilai}</p>
+            <p
+              className={`mt-1 text-xl font-bold ${
+                s.memuat ? 'text-slate-400 animate-pulse' : 'text-slate-900'
+              }`}
+            >
+              {s.nilai}
+            </p>
           </div>
         ))}
       </div>
