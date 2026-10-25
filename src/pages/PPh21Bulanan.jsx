@@ -31,6 +31,9 @@ function buatNomorBukti() {
 // PTKP: label + nilai.
 const PTKP_OPTIONS = [
   { value: 'TK/0', label: 'TK/0 — Tidak kawin, 0 tanggungan', nilai: 54_000_000 },
+  { value: 'TK/1', label: 'TK/1 — Tidak kawin, 1 tanggungan', nilai: 58_500_000 },
+  { value: 'TK/2', label: 'TK/2 — Tidak kawin, 2 tanggungan', nilai: 63_000_000 },
+  { value: 'TK/3', label: 'TK/3 — Tidak kawin, 3 tanggungan', nilai: 67_500_000 },
   { value: 'K/0', label: 'K/0 — Kawin, 0 tanggungan', nilai: 58_500_000 },
   { value: 'K/1', label: 'K/1 — Kawin, 1 tanggungan', nilai: 63_000_000 },
   { value: 'K/2', label: 'K/2 — Kawin, 2 tanggungan', nilai: 67_500_000 },
