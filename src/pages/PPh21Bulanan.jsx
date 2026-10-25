@@ -141,15 +141,22 @@ export default function PPh21Bulanan() {
    * pembulatan) bisa meleset sepersekian rupiah dari nilai API — misalnya
    * kasus 30jt+5jt: API 4.654.166,67 vs hitung ulang 4.654.166,6667 —
    * dan selisih itu ikut terbawa ke ringkasan riwayat (total_pph).
-   * Fallback ke rumus lama hanya bila `hasil` tidak ada (respons lama).
+   * Fallback hanya bila `hasil` tidak ada (respons lama): PPh dari
+   * total/12, THP Kas dari bruto - BPJS - JHT - PPh (biaya jabatan
+   * TIDAK memotong THP kas, sesuai definisi baru backend).
    */
   const totalPphSetahun = Number(result?.perhitungan_setahun?.pph_setahun ?? 0)
-  const netoBulanan = Number(result?.perhitungan_bulanan?.neto ?? 0)
+  const brutoBulanan = Number(result?.perhitungan_bulanan?.bruto ?? 0)
+  const bpjsBulanan = Number(result?.perhitungan_bulanan?.bpjs ?? 0)
+  const jhtBulanan = Number(result?.perhitungan_bulanan?.jht ?? 0)
   const pphBulanan = result
     ? Number(result.hasil?.pph21_per_bulan ?? totalPphSetahun / 12)
     : 0
   const takeHomePay = result
-    ? Number(result.hasil?.take_home_pay ?? netoBulanan - pphBulanan)
+    ? Number(
+        result.hasil?.take_home_pay ??
+          brutoBulanan - bpjsBulanan - jhtBulanan - pphBulanan,
+      )
     : 0
 
   const handleSubmit = async (e) => {
