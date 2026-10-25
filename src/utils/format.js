@@ -62,3 +62,21 @@ export function formatRupiah(value) {
 export function formatRupiahKurung(value) {
   return formatRupiah(value)
 }
+
+/**
+ * Format angka untuk KOLOM TABEL dokumen PDF (Bupot / 1721-A1 / SPT).
+ *
+ * Berbeda dengan formatRupiah: tanpa awalan "Rp" (header kolom sudah
+ * bertuliskan "Jumlah (Rp)") dan nilai negatif memakai kurung gaya
+ * akuntansi, bukan "-Rp". Hasilnya: "20.000.000" / "(500.000)" — semua
+ * sel punya bentuk yang sama sehingga kolom angka sejajar rapi dan
+ * digitnya lurus (dipakai bersama tabular-nums di CSS).
+ */
+export function formatAngkaTabel(value) {
+  const n = typeof value === 'number' ? value : Number(value)
+  const num = Number.isFinite(n) ? n : 0
+  const teks = new Intl.NumberFormat('id-ID', {
+    maximumFractionDigits: 0,
+  }).format(Math.abs(num))
+  return num < 0 ? `(${teks})` : teks
+}

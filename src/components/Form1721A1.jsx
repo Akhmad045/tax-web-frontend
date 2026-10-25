@@ -1,4 +1,4 @@
-import { formatRupiah, formatRupiahKurung } from '../utils/format'
+import { formatRupiah, formatAngkaTabel } from '../utils/format'
 
 const PEMOTONG_NAMA = 'PT Apex City Indonesia'
 const PEMOTONG_NPWP = '01.234.567.8-901.000'
@@ -14,7 +14,7 @@ const NAMA_BULAN = [
  * PENTING: pewarnaan hanya memakai class bupot-* (HEX), bukan utility
  * warna Tailwind, agar dokumen tetap hitam-putih formal saat dicetak.
  */
-function Baris({ no, uraian, jumlah, tebal = false, highlight = false, kurung = false }) {
+function Baris({ no, uraian, jumlah, tebal = false, highlight = false }) {
   return (
     <tr
       className={[
@@ -26,7 +26,7 @@ function Baris({ no, uraian, jumlah, tebal = false, highlight = false, kurung = 
       <td className="bupot-td bupot-td-kode bupot-td-no">{no}</td>
       <td className="bupot-td">{uraian}</td>
       <td className="bupot-td bupot-td-angka">
-        {kurung ? formatRupiahKurung(jumlah) : formatRupiah(jumlah)}
+        {formatAngkaTabel(jumlah)}
       </td>
     </tr>
   )
@@ -126,10 +126,10 @@ export default function Form1721A1({
           </thead>
           <tbody>
             <Baris no="1" uraian="Penghasilan Bruto (Gaji, Tunjangan, THR, Bonus, Premi)" jumlah={bruto} tebal highlight />
-            <Baris no="2" uraian="Biaya Jabatan (5%, maks Rp6.000.000)" jumlah={-biayaJabatan} kurung />
-            <Baris no="3" uraian="Iuran Pensiun / BPJS" jumlah={-bpjs} kurung />
-            <Baris no="4" uraian="Iuran JHT" jumlah={-jht} kurung />
-            <Baris no="5" uraian="Jumlah Pengurang (2 + 3 + 4)" jumlah={-(biayaJabatan + bpjs + jht)} tebal kurung />
+            <Baris no="2" uraian="Biaya Jabatan (5%, maks Rp6.000.000)" jumlah={-biayaJabatan} />
+            <Baris no="3" uraian="Iuran Pensiun / BPJS" jumlah={-bpjs} />
+            <Baris no="4" uraian="Iuran JHT" jumlah={-jht} />
+            <Baris no="5" uraian="Jumlah Pengurang (2 + 3 + 4)" jumlah={-(biayaJabatan + bpjs + jht)} tebal />
           </tbody>
         </table>
       </div>
@@ -147,7 +147,7 @@ export default function Form1721A1({
           </thead>
           <tbody>
             <Baris no="6" uraian="Penghasilan Neto (1 - 5)" jumlah={neto} tebal highlight />
-            <Baris no="7" uraian={`PTKP (Status ${statusPtkp || '-'})`} jumlah={-ptkp} kurung />
+            <Baris no="7" uraian={`PTKP (Status ${statusPtkp || '-'})`} jumlah={-ptkp} />
             <Baris no="8" uraian="Penghasilan Kena Pajak (PKP)" jumlah={pkp} tebal highlight />
             <Baris no="9" uraian="PPh 21 Terutang Setahun (Tarif Pasal 17)" jumlah={pphTerutang} tebal highlight />
             <Baris no="10" uraian="PPh 21 yang Sudah Dipotong" jumlah={pphDipotong} />

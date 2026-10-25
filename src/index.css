@@ -321,7 +321,8 @@ textarea::placeholder {
   border-color: #666666 !important;
 }
 
-/* Dokumen formal: hitam-putih, latar putih. */
+/* Dokumen formal: hitam-putih, latar putih, tipografi sans yang sama
+   dengan aplikasi (bukan serif) agar hasil PDF terasa satu produk. */
 .bupot-root,
 .bupot-root * {
   color: #000000;
@@ -372,9 +373,9 @@ textarea::placeholder {
 .bupot-root {
   color: #000000;
   background: #ffffff;
-  font-family: 'Times New Roman', Times, Georgia, serif;
-  font-size: 10.5pt;
-  line-height: 1.35;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  line-height: 1.5;
 }
 .bupot-header {
   text-align: center;
@@ -383,20 +384,21 @@ textarea::placeholder {
   padding-bottom: 8px;
 }
 .bupot-header-title {
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  font-size: 13pt;
+  font-size: 14pt;
   font-weight: 700;
 }
 .bupot-header-sub {
-  margin-top: 3px;
-  font-size: 10.5pt;
+  margin-top: 4px;
+  font-size: 10pt;
 }
 .bupot-header-meta {
   border-collapse: collapse;
+  table-layout: fixed;
   width: 100%;
   margin-top: 8px;
-  font-size: 9.5pt;
+  font-size: 10pt;
 }
 .bupot-header-meta td {
   text-align: left;
@@ -407,14 +409,17 @@ textarea::placeholder {
   width: 20%;
 }
 .bupot-meta-label-2 {
-  width: 16%;
-  padding-left: 14px !important;
+  width: 20%;
+  padding-left: 16px !important;
 }
 .bupot-meta-sep {
-  width: 1%;
+  width: 2%;
+  text-align: center;
 }
 .bupot-meta-val {
+  width: 28%;
   font-weight: 700;
+  overflow-wrap: break-word;
 }
 .bupot-strong {
   font-weight: 600;
@@ -422,34 +427,38 @@ textarea::placeholder {
 .bupot-section {
   break-inside: avoid;
   page-break-inside: avoid;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .bupot-section-title {
   text-transform: uppercase;
-  margin-bottom: 5px;
-  font-size: 10pt;
+  margin-bottom: 6px;
+  font-size: 10.5pt;
   font-weight: 700;
 }
 .bupot-ident {
   border-collapse: collapse;
+  table-layout: fixed;
   width: 100%;
   font-size: 10pt;
 }
 .bupot-ident td {
   vertical-align: top;
-  padding: 2px 4px;
+  padding: 3px 4px;
 }
 .bupot-ident-label {
   width: 30%;
 }
 .bupot-ident-sep {
-  width: 2%;
+  width: 3%;
+  text-align: center;
 }
 .bupot-ident-nilai {
   font-weight: 600;
+  overflow-wrap: break-word;
 }
 .bupot-table {
   border-collapse: collapse;
+  table-layout: fixed;
   width: 100%;
   font-size: 10pt;
 }
@@ -459,8 +468,8 @@ textarea::placeholder {
   print-color-adjust: exact;
   background: #e8e8e8;
   border: 1px solid #000000;
-  padding: 5px 6px;
-  font-size: 9.5pt;
+  padding: 6px 8px;
+  font-size: 10pt;
   font-weight: 700;
 }
 .bupot-th-kode {
@@ -478,11 +487,12 @@ textarea::placeholder {
 .bupot-td {
   vertical-align: top;
   border: 1px solid #000000;
-  padding: 4px 6px;
+  padding: 6px 8px;
+  overflow-wrap: break-word;
 }
 .bupot-td-kode {
   white-space: nowrap;
-  font-size: 9pt;
+  font-size: 10pt;
 }
 .bupot-td-angka {
   text-align: right;
@@ -495,10 +505,10 @@ textarea::placeholder {
   background: #e5e7eb !important;
 }
 .bupot-note {
-  color: #222222;
-  margin-top: 5px;
-  font-size: 8.5pt;
-  font-style: italic;
+  color: #333333;
+  margin-top: 6px;
+  font-size: 9pt;
+  font-style: normal;
 }
 .bupot-footer {
   break-inside: avoid;
@@ -508,6 +518,9 @@ textarea::placeholder {
   margin-top: 22px;
   padding-bottom: 8px;
   display: flex;
+}
+.bupot-footer-end {
+  justify-content: flex-end;
 }
 
 /* Blok tanda tangan harus utuh dalam satu halaman. Tanpa ini, pemenggalan
@@ -523,12 +536,13 @@ textarea::placeholder {
 }
 .bupot-ttd-kiri {
   width: 50%;
-  font-size: 9.5pt;
+  font-size: 10pt;
+  line-height: 1.5;
 }
 .bupot-ttd-kanan {
   text-align: center;
   width: 45%;
-  font-size: 9.5pt;
+  font-size: 10pt;
   line-height: 1.5;
 }
 .bupot-ttd-tempat {
@@ -546,8 +560,8 @@ textarea::placeholder {
   align-items: center;
   height: 62px;
   margin: 4px 26px 8px;
-  font-size: 8.5pt;
-  font-style: italic;
+  font-size: 9pt;
+  font-style: normal;
   display: flex;
   flex-shrink: 0;
 }
@@ -557,14 +571,14 @@ textarea::placeholder {
 }
 .bupot-ttd-jabatan {
   font-weight: 700;
-  font-size: 9.5pt;
+  font-size: 10pt;
   line-height: 1.5;
   /* Nama perusahaan pemotong tidak boleh terpotong. */
   white-space: normal;
   overflow-wrap: break-word;
 }
 .bupot-ttd-npwp {
-  font-size: 9pt;
+  font-size: 10pt;
   line-height: 1.5;
   white-space: normal;
   overflow-wrap: break-word;

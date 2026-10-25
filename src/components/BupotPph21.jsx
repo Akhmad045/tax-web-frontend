@@ -1,4 +1,4 @@
-import { formatRupiah, formatRupiahKurung } from '../utils/format'
+import { formatRupiah, formatAngkaTabel } from '../utils/format'
 
 const NAMA_BULAN = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -14,10 +14,11 @@ const PEMOTONG_NPWP = '01.234.567.8-901.000'
  * PENTING: seluruh pewarnaan memakai class bupot-* (HEX), BUKAN utility
  * warna Tailwind, agar dokumen tetap hitam-putih formal saat dicetak.
  *
- * `kurung` dipakai untuk baris pengurang: nilai negatif ditampilkan
- * sebagai (Rp 500.000) sesuai gaya dokumen perpajakan.
+ * Kolom angka memakai formatAngkaTabel: tanpa awalan "Rp" (header kolom
+ * sudah bertuliskan "Jumlah (Rp)") dan pengurang tampil sebagai (500.000)
+ * gaya akuntansi, sehingga semua angka sejajar rapi.
  */
-function Baris({ kode, uraian, jumlah, tebal = false, highlight = false, kurung = false }) {
+function Baris({ kode, uraian, jumlah, tebal = false, highlight = false }) {
   return (
     <tr
       className={[
@@ -29,7 +30,7 @@ function Baris({ kode, uraian, jumlah, tebal = false, highlight = false, kurung 
       <td className="bupot-td bupot-td-kode">{kode}</td>
       <td className="bupot-td">{uraian}</td>
       <td className="bupot-td bupot-td-angka">
-        {kurung ? formatRupiahKurung(jumlah) : formatRupiah(jumlah)}
+        {formatAngkaTabel(jumlah)}
       </td>
     </tr>
   )
@@ -130,12 +131,12 @@ export default function BupotPph21({ form, result, nomorBukti, tanggal }) {
             )}
             <Baris kode="" uraian="Penghasilan Bruto" jumlah={pb.bruto} tebal highlight />
 
-            <Baris kode="" uraian="Biaya Jabatan (5%)" jumlah={-biayaJabatanBulan} kurung />
-            <Baris kode="" uraian="Iuran BPJS" jumlah={-pb.bpjs} kurung />
-            <Baris kode="" uraian="Iuran JHT" jumlah={-pb.jht} kurung />
+            <Baris kode="" uraian="Biaya Jabatan (5%)" jumlah={-biayaJabatanBulan} />
+            <Baris kode="" uraian="Iuran BPJS" jumlah={-pb.bpjs} />
+            <Baris kode="" uraian="Iuran JHT" jumlah={-pb.jht} />
             <Baris kode="" uraian="Penghasilan Neto" jumlah={netoBulan} tebal highlight />
 
-            <Baris kode="" uraian="PTKP" jumlah={-ps.ptkp} kurung />
+            <Baris kode="" uraian="PTKP" jumlah={-ps.ptkp} />
             <Baris kode="" uraian="Penghasilan Kena Pajak (PKP)" jumlah={pkpSetahun} tebal highlight />
 
             <Baris
@@ -154,10 +155,7 @@ export default function BupotPph21({ form, result, nomorBukti, tanggal }) {
       </div>
 
       {/* ---------- TANDA TANGAN ---------- */}
-      <div className="bupot-footer">
-        <div className="bupot-ttd-kiri">
-          <div className="bupot-masa">Masa Pajak: {masaPajak}</div>
-        </div>
+      <div className="bupot-footer bupot-footer-end">
         <div className="bupot-ttd-kanan">
           <div className="bupot-ttd-tempat">
             {tanggal ? `${tgl.getDate()} ${NAMA_BULAN[tgl.getMonth()]} ${tgl.getFullYear()}` : ''}

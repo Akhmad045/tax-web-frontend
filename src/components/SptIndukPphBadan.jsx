@@ -1,4 +1,4 @@
-import { formatRupiah, formatRupiahKurung } from '../utils/format'
+import { formatRupiah, formatAngkaTabel } from '../utils/format'
 
 const PEMOTONG_NAMA = 'PT Apex City Indonesia'
 const PEMOTONG_NPWP = '01.234.567.8-901.000'
@@ -14,7 +14,7 @@ const NAMA_BULAN = [
  * PENTING: pewarnaan hanya memakai class bupot-* (HEX), bukan utility
  * warna Tailwind, agar dokumen tetap hitam-putih formal saat dicetak.
  */
-function Baris({ no, uraian, jumlah, tebal = false, highlight = false, kurung = false }) {
+function Baris({ no, uraian, jumlah, tebal = false, highlight = false }) {
   return (
     <tr
       className={[
@@ -26,7 +26,7 @@ function Baris({ no, uraian, jumlah, tebal = false, highlight = false, kurung = 
       <td className="bupot-td bupot-td-kode bupot-td-no">{no}</td>
       <td className="bupot-td">{uraian}</td>
       <td className="bupot-td bupot-td-angka">
-        {kurung ? formatRupiahKurung(jumlah) : formatRupiah(jumlah)}
+        {formatAngkaTabel(jumlah)}
       </td>
     </tr>
   )
@@ -118,7 +118,7 @@ export default function SptIndukPphBadan({ form, data, tanggal }) {
             <Baris no="1" uraian="Peredaran Bruto Usaha" jumlah={laba.omzet} />
             <Baris no="2" uraian="Peredaran Bruto Lainnya" jumlah={laba.omzet_lain} />
             <Baris no="3" uraian="Total Peredaran Bruto (1 + 2)" jumlah={laba.total_peredaran_bruto} tebal />
-            <Baris no="4" uraian="Biaya / Beban Usaha" jumlah={-laba.biaya} kurung />
+            <Baris no="4" uraian="Biaya / Beban Usaha" jumlah={-laba.biaya} />
             <Baris no="5" uraian="Laba / Rugi Bersih Sebelum Pajak (3 - 4)" jumlah={laba.laba_bersih} tebal highlight />
             <Baris no="6" uraian="Penghasilan Kena Pajak (PKP)" jumlah={laba.pkp} tebal highlight />
           </tbody>
@@ -192,9 +192,9 @@ export default function SptIndukPphBadan({ form, data, tanggal }) {
             </tr>
           </thead>
           <tbody>
-            <Baris no="13" uraian="Kredit Pajak PPh Pasal 25" jumlah={-hasil.kredit_pph25} kurung />
-            <Baris no="14" uraian="Kredit Pajak PPh Pasal 22/23" jumlah={-hasil.kredit_pph22_23} kurung />
-            <Baris no="15" uraian="Total Kredit Pajak (13 + 14)" jumlah={-hasil.total_kredit_pajak} tebal kurung />
+            <Baris no="13" uraian="Kredit Pajak PPh Pasal 25" jumlah={-hasil.kredit_pph25} />
+            <Baris no="14" uraian="Kredit Pajak PPh Pasal 22/23" jumlah={-hasil.kredit_pph22_23} />
+            <Baris no="15" uraian="Total Kredit Pajak (13 + 14)" jumlah={-hasil.total_kredit_pajak} tebal />
             <Baris
               no="16"
               uraian={`PPh Pasal 29 — ${statusLabel}`}
