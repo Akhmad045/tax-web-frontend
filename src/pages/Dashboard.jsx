@@ -76,18 +76,15 @@ export default function Dashboard() {
             Hitung PPh 21 Bulanan, Tahunan, dan PPh Badan (Pasal 31E) dengan
             mudah. Dilengkapi export PDF dan rekapitulasi data.
           </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          {/* CTA tunggal: hero ini rata kiri, jadi tombol tunggal tetap
+              rapi di kiri (tidak perlu dipusatkan) dan tidak terlihat
+              menggantung sendirian. */}
+          <div className="mt-6 flex">
             <Link
               to="/register"
               className="rounded-lg bg-white px-5 py-3 text-center text-sm font-semibold text-indigo-700 shadow transition hover:bg-indigo-50"
             >
-              Mulai Sekarang (Daftar)
-            </Link>
-            <Link
-              to="/login"
-              className="rounded-lg border border-white/40 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
-            >
-              Masuk ke Akun
+              Mulai Sekarang
             </Link>
           </div>
         </section>
