@@ -83,7 +83,7 @@ function paksaWarnaHex(root) {
     el.style.setProperty('border-left-color', '#000000', 'important')
   }
   for (const el of root.querySelectorAll('.bupot-th')) {
-    el.style.setProperty('background-color', '#e8e8e8', 'important')
+    el.style.setProperty('background-color', '#f8f9fa', 'important')
   }
   for (const el of root.querySelectorAll('.bupot-highlight')) {
     el.style.setProperty('background-color', '#dcdcdc', 'important')

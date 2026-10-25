@@ -310,7 +310,7 @@ textarea::placeholder {
 
 /* Pengecualian: warna dokumen formal tetap dipertahankan. */
 .pdf-print-safe .bupot-th {
-  background-color: #e8e8e8 !important;
+  background-color: #f8f9fa !important;
 }
 .pdf-print-safe .bupot-highlight {
   background-color: #e5e7eb !important;
@@ -353,7 +353,7 @@ textarea::placeholder {
   border-color: #000000;
 }
 .bupot-root .bupot-th {
-  background-color: #e8e8e8;
+  background-color: #f8f9fa;
 }
 .bupot-root .bupot-highlight,
 .bupot-root .bupot-highlight td {
@@ -380,35 +380,35 @@ textarea::placeholder {
   color: #000000;
   background: #ffffff;
   font-family: Arial, Helvetica, 'Liberation Sans', sans-serif;
-  font-size: 10pt;
+  font-size: 12px;
   line-height: 1.5;
 }
 .bupot-header {
   text-align: center;
-  border-bottom: 2px solid #000000;
+  border-bottom: 1px solid #000000;
   margin-bottom: 12px;
   padding-bottom: 8px;
 }
 .bupot-header-title {
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  font-size: 14pt;
+  font-size: 16px;
   font-weight: 700;
 }
 .bupot-header-sub {
   margin-top: 4px;
-  font-size: 10pt;
+  font-size: 12px;
 }
 .bupot-header-meta {
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
   margin-top: 8px;
-  font-size: 10pt;
+  font-size: 12px;
 }
 .bupot-header-meta td {
   text-align: left;
-  padding: 1px 3px;
+  padding: 2px 4px;
 }
 .bupot-meta-label {
   white-space: nowrap;
@@ -438,18 +438,18 @@ textarea::placeholder {
 .bupot-section-title {
   text-transform: uppercase;
   margin-bottom: 6px;
-  font-size: 10.5pt;
+  font-size: 12px;
   font-weight: 700;
 }
 .bupot-ident {
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
-  font-size: 10pt;
+  font-size: 12px;
 }
 .bupot-ident td {
   vertical-align: top;
-  padding: 3px 4px;
+  padding: 4px 6px;
 }
 .bupot-ident-label {
   width: 30%;
@@ -466,16 +466,20 @@ textarea::placeholder {
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
-  font-size: 10pt;
+  font-size: 12px;
+  /* Gaya Coretax: hanya frame luar 1px + garis antar baris 1px.
+     Garis vertikal antar kolom dihapus — kolom dibedakan lewat
+     alignment (uraian kiri, angka kanan) dan header abu-abu. */
+  border: 1px solid #000000;
 }
 .bupot-th {
   text-align: left;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-  background: #e8e8e8;
-  border: 1px solid #000000;
-  padding: 6px 8px;
-  font-size: 10pt;
+  background: #f8f9fa;
+  border-bottom: 1px solid #000000;
+  padding: 7px 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 .bupot-th-kode {
@@ -492,13 +496,13 @@ textarea::placeholder {
 }
 .bupot-td {
   vertical-align: top;
-  border: 1px solid #000000;
-  padding: 6px 8px;
+  border-bottom: 1px solid #000000;
+  padding: 7px 10px;
   overflow-wrap: break-word;
 }
 .bupot-td-kode {
   white-space: nowrap;
-  font-size: 10pt;
+  font-size: 12px;
 }
 .bupot-td-angka {
   text-align: right;
@@ -519,7 +523,7 @@ textarea::placeholder {
 .bupot-note {
   color: #333333;
   margin-top: 6px;
-  font-size: 9pt;
+  font-size: 10px;
   font-style: normal;
 }
 .bupot-footer {
@@ -527,7 +531,7 @@ textarea::placeholder {
   page-break-inside: avoid;
   justify-content: space-between;
   align-items: flex-start;
-  margin-top: 22px;
+  margin-top: 28px;
   padding-bottom: 8px;
   display: flex;
 }
@@ -548,13 +552,13 @@ textarea::placeholder {
 }
 .bupot-ttd-kiri {
   width: 50%;
-  font-size: 10pt;
+  font-size: 12px;
   line-height: 1.5;
 }
 .bupot-ttd-kanan {
   text-align: center;
   width: 45%;
-  font-size: 10pt;
+  font-size: 12px;
   line-height: 1.5;
 }
 .bupot-ttd-tempat {
@@ -572,7 +576,7 @@ textarea::placeholder {
   align-items: center;
   height: 62px;
   margin: 4px 26px 8px;
-  font-size: 9pt;
+  font-size: 10px;
   font-style: normal;
   display: flex;
   flex-shrink: 0;
@@ -583,14 +587,14 @@ textarea::placeholder {
 }
 .bupot-ttd-jabatan {
   font-weight: 700;
-  font-size: 10pt;
+  font-size: 12px;
   line-height: 1.5;
   /* Nama perusahaan pemotong tidak boleh terpotong. */
   white-space: normal;
   overflow-wrap: break-word;
 }
 .bupot-ttd-npwp {
-  font-size: 10pt;
+  font-size: 12px;
   line-height: 1.5;
   white-space: normal;
   overflow-wrap: break-word;
