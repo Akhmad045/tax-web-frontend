@@ -6,7 +6,7 @@
  *
  * Navigasi menyesuaikan status login (conditional rendering dari
  * AuthContext.isLoggedIn, yang membaca token di localStorage):
- * - Belum login  : HANYA logo TM3 + tombol "Masuk" di kanan. Teks
+ * - Belum login  : HANYA logo petir + tombol "Masuk" di kanan. Teks
  *   "TaxEase" dan seluruh menu (Dashboard, PPh 21
  *   Bulanan, PPh 21 Tahunan, PPh Badan) disembunyikan.
  * - Login admin  : teks + menu tampil (termasuk Riwayat), tampil nama
@@ -18,6 +18,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { Bell, User } from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import BottomNav from './BottomNav'
+import LogoZap from './LogoZap'
 
 const navItems = [
   { to: '/', label: 'Dashboard' },
@@ -65,7 +66,7 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-md">
         {/* Header khusus mobile: sapaan + profil/lonceng, bersih tanpa
-            menu desktop yang berantakan. Tamu: hanya logo TM3 + Masuk. */}
+            menu desktop yang berantakan. Tamu: hanya logo petir + Masuk. */}
         <div className="flex items-center justify-between px-4 py-3 md:hidden">
           {isLoggedIn ? (
             <>
@@ -92,9 +93,7 @@ export default function Layout({ children }) {
             </>
           ) : (
             <>
-              <div className="flex items-center justify-center w-10 h-10 bg-indigo-600 text-white font-extrabold text-sm rounded-xl tracking-wider">
-                TM3
-              </div>
+              <LogoZap size={40} />
               <NavLink
                 to="/login"
                 className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
@@ -108,7 +107,7 @@ export default function Layout({ children }) {
         {/* Header desktop: disembunyikan total di mobile. */}
         <div className="mx-auto hidden max-w-6xl px-6 py-4 md:flex md:flex-row md:items-center md:justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-10 h-10 bg-indigo-600 text-white font-extrabold text-sm rounded-xl tracking-wider">TM3</div>
+            <LogoZap size={40} />
             {isLoggedIn && (
               <span className="text-lg font-semibold text-slate-800">
                 TaxEase
