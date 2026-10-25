@@ -1,14 +1,5 @@
 import { Link } from 'react-router-dom'
-import {
-  Calculator,
-  Coins,
-  FileDown,
-  FileSpreadsheet,
-  History,
-  Landmark,
-  Percent,
-  ReceiptText,
-} from 'lucide-react'
+import { Calculator, FileDown, History } from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import Card from '../components/Card'
 
@@ -119,17 +110,9 @@ export default function Dashboard() {
   if (!isLoggedIn) {
     return (
       <div className="space-y-10">
-        {/* HERO: ikon latar perpajakan/keuangan (bukan palu hakim),
-            absolut + transparan, melayang dengan durasi/delay berbeda.
-            Konten teks dibungkus relative z-10 agar selalu di atas ikon. */}
-        <section className="animate-fadeInUp relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-20 text-white shadow-lg md:px-12 md:py-32">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            <Coins className="animate-float absolute right-8 top-8 h-24 w-24 text-white/20" style={{ animationDuration: '6s', animationDelay: '0s' }} />
-            <ReceiptText className="animate-float absolute bottom-10 right-24 h-32 w-32 text-white/10" style={{ animationDuration: '8s', animationDelay: '1s' }} />
-            <Percent className="animate-float absolute bottom-8 right-8 h-24 w-24 text-white/20" style={{ animationDuration: '7s', animationDelay: '0.5s' }} />
-            <Landmark className="animate-float absolute right-1/3 top-10 h-24 w-24 text-white/10" style={{ animationDuration: '9s', animationDelay: '1.5s' }} />
-            <FileSpreadsheet className="animate-float absolute bottom-6 left-1/2 h-32 w-32 text-white/10" style={{ animationDuration: '7.5s', animationDelay: '2s' }} />
-          </div>
+        {/* HERO: split layout 2 kolom. Ikon melayang sebelumnya
+            sudah dihapus agar layar tidak terlalu penuh. */}
+        <section className="animate-fadeInUp grid grid-cols-1 md:grid-cols-2 gap-8 items-center rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-20 text-white shadow-lg md:px-12 md:py-32">
           <div className="relative z-10">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-indigo-100">
               Dipercaya oleh berbagai tim keuangan &amp; praktisi pajak
@@ -146,6 +129,9 @@ export default function Dashboard() {
                 Mulai Sekarang
               </Link>
             </div>
+          </div>
+          <div className="relative z-10">
+            <img src="/hero-tax.svg" alt="Ilustrasi Pajak" className="animate-float w-full h-auto max-w-lg mx-auto drop-shadow-2xl" />
           </div>
         </section>
 
