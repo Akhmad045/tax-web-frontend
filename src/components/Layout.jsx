@@ -15,7 +15,7 @@
  *   dropdown yang sama.
  */
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { LogOut, User } from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import BottomNav from './BottomNav'
@@ -116,6 +116,7 @@ function UserDropdown({ username, role, onLogout }) {
 
 export default function Layout({ children }) {
   const { isLoggedIn, isAdmin, username, role, logout } = useAuth()
+  const navigate = useNavigate()
 
   const tampilNav = navItems.filter((item) => !item.adminOnly || isAdmin)
 
@@ -133,10 +134,19 @@ export default function Layout({ children }) {
       // abaikan
     }
 
-    // 3) Redirect penuh ke /login. Navigasi penuh (bukan SPA) memastikan
-    //    semua state React dibuang sehingga isi halaman terlindungi tidak
-    //    tersisa di memori/layar dan tombol Back tidak membuka halaman itu.
-    if (typeof window !== 'undefined') window.location.assign('/login')
+    // 3) Kembali ke halaman utama ('/') dengan navigasi SPA (replace).
+    //    Urutan penting: logout() di atas SUDAH mengosongkan sesi di
+    //    AuthContext, jadi isLoggedIn sudah false saat Beranda dirender —
+    //    yang tampil adalah cabang tamu (Landing Page di desktop), bukan
+    //    Dashboard user. `replace: true` menggantikan entri riwayat
+    //    halaman terlindungi, sehingga tombol Back tidak membukanya lagi
+    //    (lagipula ProtectedRoute akan menendang ke /login bila rute itu
+    //    dibuka tanpa sesi). Navigasi penuh (window.location) tidak lagi
+    //    dipakai: komponen halaman terlindungi ikut ter-unmount saat rute
+    //    berganti, jadi isinya tidak tersisa di layar.
+    //    Catatan: di HP (APK), gate tamu di Beranda tetap berlaku —
+    //    tamu mobile diarahkan ke /login sesuai keputusan sebelumnya.
+    navigate('/', { replace: true })
   }
 
   return (
