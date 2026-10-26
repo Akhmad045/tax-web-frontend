@@ -12,6 +12,7 @@ import { Eye, FileDown, Trash2 } from 'lucide-react'
 import BupotPph21 from '../components/BupotPph21'
 import Form1721A1 from '../components/Form1721A1'
 import SptIndukPphBadan from '../components/SptIndukPphBadan'
+import DetailRiwayatModal from '../components/DetailRiwayatModal'
 import Card from '../components/Card'
 import { exportElementToPdf } from '../utils/exportPdf'
 import { formatRupiah } from '../utils/format'
@@ -141,20 +142,22 @@ export default function RiwayatData() {
    * Export PDF dari satu baris riwayat.
    *
    * Mengambil detail lengkap baris itu dari backend (GET /api/riwayat/:id
-   * — daftar tabel tidak membawa kolom detail agar ringan), lalu
-   * merender template PDF modul tersebut secara offscreen dengan data
-   * tersimpan itu: identitas dari kolom baris + form tersimpan, angka
-   * dari hasil API tersimpan. Bukan dari form input (halaman ini tidak
-   * punya form). Baris yang detailnya tidak lengkap (mis. disimpan
-   * sebelum fitur detail ada) ditolak dengan pesan, bukan PDF kosong.
+   * — daftar tabel tidak membawa kolom detail agar ringan), kecuali bila
+   * detail sudah tersedia (dari modal detail) sehingga tidak perlu
+   * fetch ulang. Lalu merender template PDF modul tersebut secara
+   * offscreen dengan data tersimpan itu: identitas dari kolom baris +
+   * form tersimpan, angka dari hasil API tersimpan. Bukan dari form
+   * input (halaman ini tidak punya form). Baris yang detailnya tidak
+   * lengkap (mis. disimpan sebelum fitur detail ada) ditolak dengan
+   * pesan, bukan PDF kosong.
    */
-  const exportPdfBaris = async (row) => {
+  const exportPdfBaris = async (row, detailSiap = null) => {
     if (exportingId !== null) return
     setExportingId(row.id)
     setError('')
     try {
-      const data = await ambilDetailRiwayat(row.id)
-      const detail = data.detail || {}
+      const detail =
+        detailSiap || (await ambilDetailRiwayat(row.id)).detail || {}
       const hasil = detail.hasil || {}
       const cukup =
         (row.modul === 'pph21_bulanan' && hasil.perhitungan_bulanan && hasil.hasil) ||
@@ -367,47 +370,15 @@ export default function RiwayatData() {
         )}
       </Card>
 
-      {/* Panel detail */}
+      {/* Modal detail: layout terstruktur per modul, bukan JSON mentah. */}
       {(detail || loadingDetail) && (
-        <Card
-          title={detail ? `Detail Riwayat #${detail.id}` : 'Memuat detail…'}
-          subtitle={detail ? formatWaktu(detail.dibuat_pada) : ''}
-        >
-          {loadingDetail ? (
-            <p className="py-6 text-center text-sm text-slate-500">Memuat…</p>
-          ) : (
-            <div className="space-y-4 animate-fadeInUp">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-lg font-semibold text-slate-800">
-                    {detail.nama_wajib || detail.judul}
-                  </p>
-                  <p className="mt-0.5 text-sm text-slate-500">
-                    {LABEL_MODUL[detail.modul] || detail.modul}
-                    {detail.identitas ? ` · ${detail.identitas}` : ''}
-                    {detail.tahun_pajak ? ` · Tahun ${detail.tahun_pajak}` : ''}
-                  </p>
-                  {detail.ringkasan && (
-                    <p className="mt-2 text-sm font-medium text-slate-700">
-                      {detail.ringkasan}
-                    </p>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setDetail(null)}
-                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
-                >
-                  Tutup
-                </button>
-              </div>
-
-              <pre className="max-h-96 overflow-auto rounded-xl bg-slate-900 p-4 text-xs leading-relaxed text-slate-100">
-                {JSON.stringify(detail.detail, null, 2)}
-              </pre>
-            </div>
-          )}
-        </Card>
+        <DetailRiwayatModal
+          row={detail}
+          loading={loadingDetail}
+          onClose={() => setDetail(null)}
+          onExport={exportPdfBaris}
+          exporting={exportingId === detail?.id}
+        />
       )}
 
       {/* Dokumen PDF offscreen untuk export dari baris tabel: hanya
