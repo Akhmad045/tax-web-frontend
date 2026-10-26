@@ -7,6 +7,7 @@ import VerifyOTP from './VerifyOTP'
 import ForgotPassword from './ForgotPassword'
 import ResetPassword from './ResetPassword'
 import Layout from './components/Layout'
+import IdleLogout from './components/IdleLogout'
 import Dashboard from './pages/Dashboard'
 import PPh21Bulanan from './pages/PPh21Bulanan'
 import PPh21Tahunan from './pages/PPh21Tahunan'
@@ -218,6 +219,8 @@ export default function App() {
         state (termasuk isi halaman terlindungi) dibuang dari memori.
       */}
       <PemantauToken />
+      {/* Auto-Logout 30 menit idle: tetap ter-mount di semua rute. */}
+      <IdleLogout />
       <Routes>
         <Route path="/" element={<Beranda />} />
         <Route
