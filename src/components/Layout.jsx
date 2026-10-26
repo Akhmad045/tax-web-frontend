@@ -1,52 +1,63 @@
 /**
- * Layout utama aplikasi — struktur template NiceAdmin.
+ * Layout utama aplikasi: header fintech + area konten.
  *
  * Catatan: tidak ada file Header.jsx terpisah — header tinggal di file
  * ini (Layout.jsx) dan dipakai semua halaman.
  *
- * Cabang TAMU (belum login): header sederhana lama dipertahankan
- * (logo + tombol "Masuk" saja, tanpa sidebar/menu). Landing page,
- * login, register, dan alur OTP tetap memakai tampilan lamanya.
- *
- * Cabang LOGIN: chrome NiceAdmin penuh —
- * - Header atas (id="header", fixed-top): logo TaxEase + tombol
- *   hamburger (bi-list) + dropdown profil di kanan.
- * - Sidebar kiri (id="sidebar"): menu Dashboard, PPh 21 Bulanan,
- *   PPh 21 Tahunan, PPh Badan, Riwayat (admin-only, seperti dulu).
- * - Konten (id="main"): #main template sudah memberi margin kiri
- *   300px di desktop dan margin atas 60px; anaknya dibungkus
- *   max-w-6xl agar lebar baca halaman tetap seperti sebelumnya.
- * - Footer (id="footer"): hak cipta + kredit singkat.
- *
- * Toggle sidebar: NiceAdmin mengatur visibilitas lewat class
- * `toggle-sidebar` di <body> (desktop: sidebar menghilang; mobile
- * <1200px: sidebar muncul sebagai overlay). Di sini toggle itu
- * dipegang React (bukan main.js template, yang akan berebut DOM
- * dengan React) — klik hamburger, klik link di mobile, dan logout
- * semuanya membersihkan class tersebut.
- *
- * Navigasi menyesuaikan status login (AuthContext.isLoggedIn):
- * - Belum login  : hanya logo + "Masuk"; menu disembunyikan.
- * - Login admin  : menu tampil lengkap (termasuk Riwayat).
- * - Login user   : menu tampil tanpa Riwayat.
- * BottomNav mobile tetap ada untuk user login (navigasi jempol),
- * berdampingan dengan sidebar yang dibuka lewat hamburger.
+ * Navigasi menyesuaikan status login (conditional rendering dari
+ * AuthContext.isLoggedIn, yang membaca token di localStorage):
+ * - Belum login  : logo petir + teks "TaxEase" selalu tampil, dan
+ *   HANYA tombol "Masuk" di kanan. Seluruh menu (Dashboard, PPh 21
+ *   Bulanan, PPh 21 Tahunan, PPh Badan) disembunyikan.
+ * - Login admin  : teks + menu tampil (termasuk Riwayat), profil lewat
+ *   dropdown (nama + role + Logout).
+ * - Login user   : teks + menu tampil (tanpa Riwayat), profil lewat
+ *   dropdown yang sama.
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { LogOut } from 'lucide-react'
+import {
+  Building2,
+  CalendarDays,
+  Calculator,
+  History,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  User,
+} from 'lucide-react'
 import { useAuth } from '../AuthContext'
 import BottomNav from './BottomNav'
 import LogoZap from './LogoZap'
 
 const navItems = [
-  { to: '/', label: 'Dashboard', bi: 'bi-grid' },
-  { to: '/pph21-bulanan', label: 'PPh 21 Bulanan', bi: 'bi-calculator' },
-  { to: '/pph21-tahunan', label: 'PPh 21 Tahunan', bi: 'bi-calendar3' },
-  { to: '/pph-badan', label: 'PPh Badan', bi: 'bi-building' },
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/pph21-bulanan', label: 'PPh 21 Bulanan', icon: Calculator },
+  { to: '/pph21-tahunan', label: 'PPh 21 Tahunan', icon: CalendarDays },
+  { to: '/pph-badan', label: 'PPh Badan', icon: Building2 },
   // Riwayat ditandai adminOnly; difilter di bawah sesuai role.
-  { to: '/riwayat', label: 'Riwayat', bi: 'bi-clock-history', adminOnly: true },
+  { to: '/riwayat', label: 'Riwayat', icon: History, adminOnly: true },
 ]
+
+const kelasNav = ({ isActive }) =>
+  [
+    'relative flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-300',
+    'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:transition-transform after:duration-300 after:origin-left',
+    isActive
+      ? 'text-indigo-600 after:scale-x-100'
+      : 'text-slate-600 hover:text-indigo-600 after:scale-x-0 hover:after:scale-x-100',
+  ].join(' ')
+
+// Link panel hamburger mobile: blok penuh dengan ikon + teks, warna
+// aktif senada menu desktop (tanpa underline animasi).
+const kelasNavMobile = ({ isActive }) =>
+  [
+    'flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors',
+    isActive
+      ? 'bg-indigo-50 text-indigo-600'
+      : 'text-slate-700 hover:bg-slate-50 hover:text-indigo-600',
+  ].join(' ')
+
 
 /**
  * Dropdown profil navbar: satu tombol bulat berisi inisial huruf depan
@@ -125,23 +136,11 @@ function UserDropdown({ username, role, onLogout }) {
 export default function Layout({ children }) {
   const { isLoggedIn, isAdmin, username, role, logout } = useAuth()
   const navigate = useNavigate()
-  const [sidebarToggled, setSidebarToggled] = useState(false)
+  // Panel hamburger mobile: dibuka/tutup lewat tombol Menu di header
+  // mobile, dan otomatis tertutup saat salah satu link diklik.
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const tampilNav = navItems.filter((item) => !item.adminOnly || isAdmin)
-
-  const toggleSidebar = () => {
-    const berikutnya = !sidebarToggled
-    setSidebarToggled(berikutnya)
-    document.body.classList.toggle('toggle-sidebar', berikutnya)
-  }
-
-  // Di mobile, sidebar adalah overlay: menutupnya begitu link diklik.
-  const tutupSidebarMobile = () => {
-    if (window.innerWidth < 1200) {
-      setSidebarToggled(false)
-      document.body.classList.remove('toggle-sidebar')
-    }
-  }
 
   const handleLogout = () => {
     // 1) Hapus sesi lewat AuthContext (token, role, username).
@@ -157,11 +156,7 @@ export default function Layout({ children }) {
       // abaikan
     }
 
-    // 3) Kembalikan sidebar ke keadaan default (terbuka di desktop).
-    document.body.classList.remove('toggle-sidebar')
-    setSidebarToggled(false)
-
-    // 4) Kembali ke halaman utama ('/') dengan navigasi SPA (replace).
+    // 3) Kembali ke halaman utama ('/') dengan navigasi SPA (replace).
     //    Urutan penting: logout() di atas SUDAH mengosongkan sesi di
     //    AuthContext, jadi isLoggedIn sudah false saat Beranda dirender —
     //    yang tampil adalah cabang tamu (Landing Page di desktop), bukan
@@ -170,132 +165,157 @@ export default function Layout({ children }) {
     //    (lagipula ProtectedRoute akan menendang ke /login bila rute itu
     //    dibuka tanpa sesi). Navigasi penuh (window.location) tidak lagi
     //    dipakai: komponen halaman terlindungi ikut ter-unmount saat rute
-    //    berganti, sehingga isinya tidak tersisa di layar.
+    //    berganti, jadi isinya tidak tersisa di layar.
     //    Catatan: di HP (APK), gate tamu di Beranda tetap berlaku —
     //    tamu mobile diarahkan ke /login sesuai keputusan sebelumnya.
     navigate('/', { replace: true })
   }
 
-  // ---- Cabang TAMU: header sederhana lama, tanpa sidebar/menu. ----
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-slate-50">
-        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300">
-          {/* Header khusus mobile: logo + Masuk. */}
-          <div className="flex items-center justify-between px-4 py-3 md:hidden">
-            <div className="flex items-center gap-2">
-              <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
-                <LogoZap size={40} />
-              </span>
-              <span className="text-lg font-semibold text-slate-800">
-                TaxEase
-              </span>
-            </div>
-            <NavLink
-              to="/login"
-              className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-            >
-              Masuk
-            </NavLink>
-          </div>
-
-          {/* Header desktop: disembunyikan total di mobile. */}
-          <div className="mx-auto hidden max-w-6xl px-6 py-4 md:flex md:flex-row md:items-center md:justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
-                <LogoZap size={40} />
-              </span>
-              <span className="text-lg font-semibold text-slate-800">
-                TaxEase
-              </span>
-            </Link>
-            <NavLink
-              to="/login"
-              className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-            >
-              Masuk
-            </NavLink>
-          </div>
-        </header>
-
-        <main className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 md:px-6 md:py-8 md:pb-8">
-          {children}
-        </main>
-
-        <footer className="mx-auto max-w-6xl px-6 pb-24 pt-4 text-center text-xs text-slate-400 md:pb-10">
-          Tax Web App · Frontend React + Vite + Tailwind · Backend FastAPI
-        </footer>
-      </div>
-    )
-  }
-
-  // ---- Cabang LOGIN: chrome NiceAdmin (header + sidebar + main). ----
   return (
-    <>
-      <header id="header" className="header fixed-top d-flex align-items-center">
-        <div className="d-flex align-items-center justify-content-between">
-          <Link to="/" className="logo d-flex align-items-center">
-            <LogoZap size={32} />
-            <span className="d-none d-lg-block">TaxEase</span>
-          </Link>
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            aria-label="Buka/tutup menu"
-            aria-expanded={sidebarToggled}
-            className="toggle-sidebar-btn bg-transparent border-0"
-          >
-            <i className="bi bi-list" />
-          </button>
+    <div className="min-h-screen bg-slate-50">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300">
+        {/* Header khusus mobile: sapaan + profil/lonceng, bersih tanpa
+            menu desktop yang berantakan. Tamu: hanya logo petir + Masuk. */}
+        <div className="flex items-center justify-between px-4 py-3 md:hidden">
+          {isLoggedIn ? (
+            <>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white">
+                  <User size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">
+                    Halo, {username || 'Pengguna'}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {isAdmin ? 'Admin · ' : ''}TaxEase
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen((buka) => !buka)}
+                  aria-label="Menu navigasi"
+                  aria-expanded={isMobileMenuOpen}
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 transition hover:bg-slate-100 active:scale-95 md:hidden"
+                >
+                  <Menu size={22} />
+                </button>
+                <UserDropdown username={username} role={role} onLogout={handleLogout} />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
+                  <LogoZap size={40} />
+                </span>
+                <span className="text-lg font-semibold text-slate-800">
+                  TaxEase
+                </span>
+              </div>
+              <NavLink
+                to="/login"
+                className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              >
+                Masuk
+              </NavLink>
+            </>
+          )}
         </div>
 
-        <nav className="header-nav ms-auto">
-          <ul className="d-flex align-items-center m-0 p-0">
-            <li className="nav-item dropdown pe-3">
-              <UserDropdown username={username} role={role} onLogout={handleLogout} />
-            </li>
-          </ul>
-        </nav>
+        {/* Header desktop: disembunyikan total di mobile. */}
+        <div className="mx-auto hidden max-w-6xl px-6 py-4 md:flex md:flex-row md:items-center md:justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="inline-block transition-transform duration-500 hover:rotate-12 hover:scale-110">
+              <LogoZap size={40} />
+            </span>
+            <span className="text-lg font-semibold text-slate-800">
+              TaxEase
+            </span>
+          </Link>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {isLoggedIn && (
+              <nav className="flex flex-wrap gap-1">
+                {tampilNav.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      end={item.to === '/'}
+                      className={kelasNav}
+                    >
+                      <Icon size={16} />
+                      {item.label}
+                    </NavLink>
+                  )
+                })}
+              </nav>
+            )}
+
+            {isLoggedIn ? (
+              <div className="border-l border-slate-200 pl-3">
+                <UserDropdown username={username} role={role} onLogout={handleLogout} />
+              </div>
+            ) : (
+              <NavLink
+                to="/login"
+                className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              >
+                Masuk
+              </NavLink>
+            )}
+          </div>
+        </div>
+
+        {/* Panel hamburger mobile: daftar link yang sama dengan ikon,
+            hanya untuk user login (menu memang login-only). Header itu
+            sticky sehingga panel absolute top-full menempel tepat di
+            bawah navbar. Panel selalu ter-mount saat login agar
+            transition-all benar-benar berjalan (bukan sekadar muncul);
+            saat tertutup ia tak terlihat dan tak bisa diklik. */}
+        {isLoggedIn && (
+          <nav
+            aria-hidden={!isMobileMenuOpen}
+            className={`md:hidden absolute top-full left-0 w-full bg-white border-b border-slate-200 shadow-lg z-40 transition-all duration-300 ${
+              isMobileMenuOpen
+                ? 'translate-y-0 opacity-100'
+                : 'pointer-events-none -translate-y-2 opacity-0'
+            }`}
+          >
+            {tampilNav.map((item) => {
+              const Icon = item.icon
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  className={kelasNavMobile}
+                  tabIndex={isMobileMenuOpen ? 0 : -1}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Icon size={18} />
+                  {item.label}
+                </NavLink>
+              )
+            })}
+          </nav>
+        )}
       </header>
 
-      <aside id="sidebar" className="sidebar">
-        <ul className="sidebar-nav" id="sidebar-nav">
-          <li className="nav-heading">Menu Utama</li>
-          {tampilNav.map((item) => (
-            <li className="nav-item" key={item.to}>
-              <NavLink
-                to={item.to}
-                end={item.to === '/'}
-                onClick={tutupSidebarMobile}
-                className={({ isActive }) =>
-                  `nav-link${isActive ? '' : ' collapsed'}`
-                }
-              >
-                <i className={`bi ${item.bi}`} />
-                <span>{item.label}</span>
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </aside>
-
-      <main id="main" className="main">
-        <div className="mx-auto w-full max-w-6xl">{children}</div>
+      <main className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 md:px-6 md:py-8 md:pb-8">
+        {children}
       </main>
 
-      <footer id="footer" className="footer pb-24 md:pb-5">
-        <div className="copyright">
-          © {new Date().getFullYear()}{' '}
-          <strong>
-            <span>TaxEase</span>
-          </strong>{' '}
-          — Kalkulator Pajak Terpadu
-        </div>
-        <div className="credits">Frontend React + Vite · Backend FastAPI</div>
+      <footer className="mx-auto max-w-6xl px-6 pb-24 pt-4 text-center text-xs text-slate-400 md:pb-10">
+        Tax Web App · Frontend React + Vite + Tailwind · Backend FastAPI
       </footer>
 
       {/* Bottom navigation mobile, hanya untuk user yang sudah login. */}
-      <BottomNav />
-    </>
+      {isLoggedIn && <BottomNav />}
+    </div>
   )
 }

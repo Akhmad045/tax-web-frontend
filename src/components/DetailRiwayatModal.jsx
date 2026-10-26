@@ -200,7 +200,7 @@ export default function DetailRiwayatModal({
 
   return (
     <div
-      className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1100] flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6"
       onClick={onClose}
       role="dialog"
       aria-modal="true"

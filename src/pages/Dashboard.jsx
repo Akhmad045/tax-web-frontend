@@ -264,29 +264,22 @@ export default function Dashboard() {
   // Quick Stats kini real-time dari database (lihat useEffect di atas):
   // total = jumlah baris riwayat, total nominal = SUM total_pph.
   const peran = role ? role.charAt(0).toUpperCase() + role.slice(1) : isAdmin ? 'Admin' : 'User'
-  // Kartu info gaya NiceAdmin (.dashboard .info-card): ikon lingkaran
-  // berwarna + angka besar. Varian warna template: sales (biru),
-  // customers (oranye), revenue (hijau).
   const quickStats = [
     {
       label: 'Total Perhitungan',
       nilai: stats ? String(stats.total ?? 0) : 'Memuat...',
       memuat: stats === null,
-      varian: 'sales-card',
-      bi: 'bi-calculator',
     },
-    { label: 'Role Akun', nilai: peran, memuat: false, varian: 'customers-card', bi: 'bi-person-badge' },
+    { label: 'Role Akun', nilai: peran, memuat: false },
     {
       label: 'Total Pajak Dihitung',
       nilai: stats ? formatRupiah(stats.total_nominal_pajak ?? 0) : 'Memuat...',
       memuat: stats === null,
-      varian: 'revenue-card',
-      bi: 'bi-currency-dollar',
     },
   ]
 
   return (
-    <div className="space-y-8 dashboard">
+    <div className="space-y-8">
       <div className="animate-fadeInUp">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
           Selamat datang kembali, {username || 'Pengguna'}!
@@ -298,20 +291,20 @@ export default function Dashboard() {
 
       <div className="animate-fadeInUp grid gap-4 sm:grid-cols-3" style={{ animationDelay: '100ms' }}>
         {quickStats.map((s) => (
-          <div key={s.label} className={`card info-card mb-0 ${s.varian}`}>
-            <div className="card-body pt-4">
-              <h5 className="card-title">{s.label}</h5>
-              <div className="d-flex align-items-center">
-                <div className="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i className={`bi ${s.bi}`} />
-                </div>
-                <div className="ps-3">
-                  <h6 className={s.memuat ? 'animate-pulse text-slate-400' : ''}>
-                    {s.nilai}
-                  </h6>
-                </div>
-              </div>
-            </div>
+          <div
+            key={s.label}
+            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4"
+          >
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              {s.label}
+            </p>
+            <p
+              className={`mt-1 text-xl font-bold ${
+                s.memuat ? 'text-slate-400 animate-pulse' : 'text-slate-900'
+              }`}
+            >
+              {s.nilai}
+            </p>
           </div>
         ))}
       </div>
@@ -344,17 +337,15 @@ export default function Dashboard() {
               className="animate-fadeInUp h-full"
               style={{ animationDelay: `${200 + i * 100}ms` }}
             >
-              <div className="card group mb-0 flex h-full flex-col transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-                <div className="card-body d-flex flex-column pt-4">
-                  <div className="bg-indigo-50 text-indigo-600 p-3 rounded-xl mb-4 inline-block self-start transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                    <Icon size={24} />
-                  </div>
-                  <h3 className="text-base font-semibold text-slate-800">{title}</h3>
-                  <p className="mt-1 text-sm text-slate-500">{desc}</p>
-                  <span className="mt-auto pt-4 flex items-center gap-1 text-indigo-600 font-semibold transition-all duration-300 group-hover:text-indigo-800 group-hover:translate-x-1">
-                    Buka modul <ArrowRight size={16} />
-                  </span>
+              <div className="group flex h-full flex-col bg-white rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl hover:border-indigo-300 p-6">
+                <div className="bg-indigo-50 text-indigo-600 p-3 rounded-xl mb-4 inline-block self-start transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                  <Icon size={24} />
                 </div>
+                <h3 className="text-base font-semibold text-slate-800">{title}</h3>
+                <p className="mt-1 text-sm text-slate-500">{desc}</p>
+                <span className="mt-auto pt-4 flex items-center gap-1 text-indigo-600 font-semibold transition-all duration-300 group-hover:text-indigo-800 group-hover:translate-x-1">
+                  Buka modul <ArrowRight size={16} />
+                </span>
               </div>
             </div>
           </Link>

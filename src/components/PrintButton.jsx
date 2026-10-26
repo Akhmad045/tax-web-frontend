@@ -1,9 +1,7 @@
-import { Download, Loader2 } from 'lucide-react'
-
 /**
  * Tombol "Export PDF" yang disembunyikan saat dicetak.
  * Menjalankan `onExport` (html2pdf.js: PDF langsung terunduh,
- * tanpa dialog print browser). Gaya: btn-outline-primary template.
+ * tanpa dialog print browser).
  */
 export default function PrintButton({
   onExport,
@@ -16,9 +14,9 @@ export default function PrintButton({
       type="button"
       onClick={onExport}
       disabled={disabled || loading}
-      className="print:hidden btn btn-outline-primary d-inline-flex align-items-center gap-2"
+      className="print:hidden rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {loading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+      <span className="mr-1.5">{loading ? '⏳' : '⬇'}</span>
       {loading ? 'Menyiapkan…' : label}
     </button>
   )

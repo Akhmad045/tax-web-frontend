@@ -226,14 +226,14 @@ export default function RiwayatData() {
           type="button"
           onClick={muatData}
           disabled={loading}
-          className="btn btn-outline-secondary"
+          className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? 'Memuat…' : '↻ Muat Ulang'}
         </button>
       </div>
 
       {error && (
-        <div className="alert alert-danger">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
           {error}
         </div>
       )}
@@ -260,7 +260,7 @@ export default function RiwayatData() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="form-select text-sm font-medium"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               {FILTER.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -285,9 +285,9 @@ export default function RiwayatData() {
           </div>
         ) : (
           <div className="overflow-x-auto animate-fadeInUp" style={{ animationDelay: '300ms' }}>
-            <table className="table table-hover align-middle w-full min-w-[860px] text-sm">
+            <table className="w-full min-w-[860px] border-collapse text-sm">
               <thead>
-                <tr className="text-left">
+                <tr className="border-b border-slate-200 text-left">
                   <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">Modul</th>
                   <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">Nama</th>
                   <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">NIK / NPWP</th>
