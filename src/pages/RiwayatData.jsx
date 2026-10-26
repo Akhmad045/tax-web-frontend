@@ -2,11 +2,18 @@
  * RiwayatData
  * -----------
  * Menampilkan seluruh perhitungan yang sudah disimpan di database
- * (tabel riwayat di backend) + filter per modul, lihat detail, dan hapus.
+ * (tabel riwayat di backend) + filter per modul, lihat detail, hapus,
+ * dan export PDF langsung dari baris riwayat (memakai data tersimpan
+ * di baris tersebut, bukan form input).
  */
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Eye, FileDown, Trash2 } from 'lucide-react'
+import BupotPph21 from '../components/BupotPph21'
+import Form1721A1 from '../components/Form1721A1'
+import SptIndukPphBadan from '../components/SptIndukPphBadan'
 import Card from '../components/Card'
+import { exportElementToPdf } from '../utils/exportPdf'
 import { formatRupiah } from '../utils/format'
 import {
   LABEL_MODUL,
@@ -49,6 +56,12 @@ export default function RiwayatData() {
   const [detail, setDetail] = useState(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
   const [menghapus, setMenghapus] = useState(null)
+  // Target export PDF dari baris tabel: { row, detail } — dirender
+  // offscreen lalu diunduh lewat exportElementToPdf (template yang sama
+  // dengan halaman kalkulator, tapi datanya dari baris yang diklik).
+  const [exportTarget, setExportTarget] = useState(null)
+  const [exportingId, setExportingId] = useState(null)
+  const exportRef = useRef(null)
 
   const muatData = useCallback(async () => {
     setLoading(true)
@@ -124,6 +137,79 @@ export default function RiwayatData() {
     }
   }
 
+  /**
+   * Export PDF dari satu baris riwayat.
+   *
+   * Mengambil detail lengkap baris itu dari backend (GET /api/riwayat/:id
+   * — daftar tabel tidak membawa kolom detail agar ringan), lalu
+   * merender template PDF modul tersebut secara offscreen dengan data
+   * tersimpan itu: identitas dari kolom baris + form tersimpan, angka
+   * dari hasil API tersimpan. Bukan dari form input (halaman ini tidak
+   * punya form). Baris yang detailnya tidak lengkap (mis. disimpan
+   * sebelum fitur detail ada) ditolak dengan pesan, bukan PDF kosong.
+   */
+  const exportPdfBaris = async (row) => {
+    if (exportingId !== null) return
+    setExportingId(row.id)
+    setError('')
+    try {
+      const data = await ambilDetailRiwayat(row.id)
+      const detail = data.detail || {}
+      const hasil = detail.hasil || {}
+      const cukup =
+        (row.modul === 'pph21_bulanan' && hasil.perhitungan_bulanan && hasil.hasil) ||
+        (row.modul === 'pph21_tahunan' && hasil.perhitungan_setahun && hasil.hasil) ||
+        (row.modul === 'pph_badan' && hasil.perhitungan_laba && hasil.hasil)
+      if (!cukup) {
+        throw new Error(
+          'Data lengkap baris ini tidak tersedia (disimpan tanpa detail perhitungan).',
+        )
+      }
+      setExportTarget({ row, detail })
+    } catch (err) {
+      setError(pesanGalatApi(err, 'Gagal mengekspor PDF.'))
+      setExportingId(null)
+    }
+  }
+
+  // Begitu target export dirender offscreen, langsung unduh PDF-nya
+  // lalu bersihkan target (sama polanya dengan tombol Export di halaman
+  // kalkulator, hanya saja pemicunya dari baris tabel).
+  useEffect(() => {
+    if (!exportTarget || !exportRef.current) return undefined
+    const { row } = exportTarget
+    const nama = (row.nama_wajib || row.judul || 'WajibPajak').replace(/\s+/g, '-')
+    const namaFile =
+      row.modul === 'pph21_bulanan'
+        ? `Bupot-PPh21-${nama}`
+        : row.modul === 'pph21_tahunan'
+          ? `1721-A1-${nama}${row.tahun_pajak ? `-${row.tahun_pajak}` : ''}`
+          : `SPT-PPh-Badan-${nama}${row.tahun_pajak ? `-${row.tahun_pajak}` : ''}`
+    let batal = false
+    exportElementToPdf(exportRef.current, namaFile)
+      .catch((err) => {
+        if (!batal) setError(err.message || 'Gagal membuat PDF.')
+      })
+      .finally(() => {
+        if (!batal) {
+          setExportTarget(null)
+          setExportingId(null)
+        }
+      })
+    return () => {
+      batal = true
+    }
+  }, [exportTarget])
+
+  // Tanggal dokumen untuk export: pakai tanggal simpan baris (lebih
+  // setia daripada tanggal hari ini), jatuh ke hari ini bila tak valid.
+  const tanggalExport = exportTarget
+    ? (() => {
+        const d = new Date(exportTarget.row.dibuat_pada)
+        return Number.isNaN(d.getTime()) ? new Date() : d
+      })()
+    : null
+
   return (
     <div className="space-y-6 animate-fadeInUp">
       <div className="flex flex-wrap items-start justify-between gap-3 animate-fadeInUp" style={{ animationDelay: '100ms' }}>
@@ -198,14 +284,14 @@ export default function RiwayatData() {
           <div className="overflow-x-auto animate-fadeInUp" style={{ animationDelay: '300ms' }}>
             <table className="w-full min-w-[860px] border-collapse text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                  <th className="px-3 py-2.5 font-semibold">Modul</th>
-                  <th className="px-3 py-2.5 font-semibold">Nama</th>
-                  <th className="px-3 py-2.5 font-semibold">NIK / NPWP</th>
-                  <th className="px-3 py-2.5 font-semibold">Tahun</th>
-                  <th className="px-3 py-2.5 text-right font-semibold">PPh</th>
-                  <th className="px-3 py-2.5 font-semibold">Disimpan</th>
-                  <th className="px-3 py-2.5 text-right font-semibold">Aksi</th>
+                <tr className="border-b border-slate-200 text-left">
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">Modul</th>
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">Nama</th>
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">NIK / NPWP</th>
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">Tahun</th>
+                  <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">PPh</th>
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500">Tanggal</th>
+                  <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -224,38 +310,52 @@ export default function RiwayatData() {
                         {LABEL_MODUL[it.modul] || it.modul}
                       </span>
                     </td>
-                    <td className="px-3 py-3">
-                      <p className="font-medium text-slate-800">{it.nama_wajib || it.judul}</p>
+                    <td className="px-3 py-3 text-sm text-slate-800">
+                      <p className="font-medium">{it.nama_wajib || it.judul}</p>
                       {it.status_ptkp && (
                         <p className="text-xs text-slate-400">PTKP {it.status_ptkp}</p>
                       )}
                     </td>
-                    <td className="px-3 py-3 font-mono text-xs text-slate-600">
+                    <td className="px-3 py-3 font-mono text-sm text-slate-800">
                       {it.identitas || '-'}
                     </td>
-                    <td className="px-3 py-3 text-slate-600">{it.tahun_pajak || '-'}</td>
-                    <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-slate-800">
+                    <td className="px-3 py-3 text-sm text-slate-800">{it.tahun_pajak || '-'}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right text-sm font-semibold text-slate-800">
                       {formatRupiah(it.total_pph)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-3 text-xs text-slate-500">
+                    <td className="whitespace-nowrap px-3 py-3 text-sm text-slate-800">
                       {formatWaktu(it.dibuat_pada)}
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1">
                         <button
                           type="button"
                           onClick={() => bukaDetail(it.id)}
-                          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                          title="Lihat detail"
+                          aria-label="Lihat detail"
+                          className="p-2 rounded-lg transition-colors text-indigo-600 hover:bg-indigo-50"
                         >
-                          Detail
+                          <Eye size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => exportPdfBaris(it)}
+                          disabled={exportingId === it.id}
+                          title="Export PDF"
+                          aria-label="Export PDF"
+                          className="p-2 rounded-lg transition-colors text-emerald-600 hover:bg-emerald-50 disabled:opacity-50"
+                        >
+                          <FileDown size={18} />
                         </button>
                         <button
                           type="button"
                           onClick={() => konfirmasiHapus(it.id)}
                           disabled={menghapus === it.id}
-                          className="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+                          title="Hapus riwayat"
+                          aria-label="Hapus riwayat"
+                          className="p-2 rounded-lg transition-colors text-red-600 hover:bg-red-50 disabled:opacity-50"
                         >
-                          {menghapus === it.id ? '…' : 'Hapus'}
+                          <Trash2 size={18} />
                         </button>
                       </div>
                     </td>
@@ -308,6 +408,45 @@ export default function RiwayatData() {
             </div>
           )}
         </Card>
+      )}
+
+      {/* Dokumen PDF offscreen untuk export dari baris tabel: hanya
+          dirender saat ada target export, memakai template & CSS yang
+          sama dengan halaman kalkulator (bupot-offscreen-wrap). */}
+      {exportTarget && (
+        <div ref={exportRef} className="bupot-offscreen-wrap" style={{ paddingBottom: '80px' }}>
+          {exportTarget.row.modul === 'pph21_bulanan' && (
+            <BupotPph21
+              form={exportTarget.detail.form || {}}
+              result={exportTarget.detail.hasil}
+              nomorBukti={exportTarget.detail.nomor_bukti || '-'}
+              tanggal={tanggalExport}
+            />
+          )}
+          {exportTarget.row.modul === 'pph21_tahunan' && (
+            <Form1721A1
+              namaPenerima={exportTarget.detail.form?.nama_pegawai || exportTarget.row.nama_wajib || ''}
+              npwp={exportTarget.detail.form?.npwp || exportTarget.row.identitas || ''}
+              tahunPajak={exportTarget.detail.form?.tahun_pajak || exportTarget.row.tahun_pajak || ''}
+              statusPtkp={
+                exportTarget.detail.hasil?.status_ptkp ||
+                exportTarget.detail.form?.status_ptkp ||
+                exportTarget.row.status_ptkp ||
+                ''
+              }
+              statusPegawai={exportTarget.detail.form?.status_pegawai || ''}
+              data={exportTarget.detail.hasil}
+              tanggal={tanggalExport}
+            />
+          )}
+          {exportTarget.row.modul === 'pph_badan' && (
+            <SptIndukPphBadan
+              form={exportTarget.detail.form || {}}
+              data={exportTarget.detail.hasil}
+              tanggal={tanggalExport}
+            />
+          )}
+        </div>
       )}
     </div>
   )
