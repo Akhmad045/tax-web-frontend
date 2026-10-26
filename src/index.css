@@ -1,4 +1,34 @@
+/* ---------------------------------------------------------------------------
+   INTEGRASI TEMPLATE NICEADMIN (Bootstrap 5.3 + style.css template)
+   ---------------------------------------------------------------------------
+   File template tinggal di public/assets/ (disalin dari repo NiceAdmin,
+   hanya yang dipakai: bootstrap.min.css, bootstrap-icons + font,
+   style.css — vendor berat seperti echarts/tinymce/quill/chart.js
+   sengaja tidak ikut karena aplikasi tidak memakai chart/editor).
+
+   CSS template dimuat dalam cascade layer `vendor` yang dideklarasikan
+   SEBELUM layer Tailwind (theme/base/components/utilities). Ini penting:
+   Bootstrap tanpa layer akan MENANG atas utility Tailwind (aturan tanpa
+   layer selalu mengalahkan aturan berlayer), sehingga ukuran teks
+   Tailwind (mis. text-2xl pada judul) akan kalah oleh reboot Bootstrap.
+   Dengan layer ini, urutannya terjaga: komponen template (.card,
+   .sidebar, .header, .form-control, .table) tetap tampil, tapi utility
+   Tailwind dan preflight tetap menang bila berbenturan di elemen yang
+   sama. File-file di public/ tidak diproses Vite — mereka disalin apa
+   adanya ke dist/ dan dimuat dari URL yang sama (/assets/...), sehingga
+   @import ber-layer ini tetap valid di CSS hasil build (semua @import
+   ada di atas file, sebelum aturan lain).
+
+   JS template (main.js / bootstrap.bundle) sengaja TIDAK dimuat: semua
+   interaksi (toggle sidebar, dropdown profil) dipegang React. Bootstrap
+   JS tanpa atribut data-bs-* tidak akan berbuat apa-apa selain menambah
+   bobot, sementara main.js template akan berebut DOM dengan React.
+   --------------------------------------------------------------------------- */
+@layer vendor, theme, base, components, utilities;
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('/assets/vendor/bootstrap/css/bootstrap.min.css') layer(vendor);
+@import url('/assets/vendor/bootstrap-icons/bootstrap-icons.css') layer(vendor);
+@import url('/assets/css/style.css') layer(vendor);
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
@@ -101,6 +131,18 @@
   --color-green-700: #008236;
   --color-green-800: #016630;
   --color-green-900: #0d542b;
+
+  /* ---- amber & emerald (tambahan 2026-10-26) ---- */
+  /* Dipakai IdleLogout (amber), ikon export Riwayat (emerald), dan
+     peringatan modal detail (amber). Tanpa HEX, Tailwind memakai oklch
+     bawaan dan html2pdf berisiko gagal saat export PDF (alasan yang
+     sama seperti blok palet di atas). Hanya shade yang dipakai yang
+     didefinisikan. */
+  --color-amber-50: #fffbeb;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-600: #059669;
 }
 
 body {

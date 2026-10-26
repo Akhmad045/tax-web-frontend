@@ -165,7 +165,7 @@ function CellInput({ value, onChange, readOnly = false }) {
       onChange={readOnly ? undefined : handleChange}
       placeholder="0"
       className={[
-        'w-full rounded-lg border px-2 py-1.5 text-right text-sm outline-none transition',
+        'form-control form-control-sm text-right text-sm',
         readOnly
           ? 'cursor-not-allowed border-slate-100 bg-slate-100 font-semibold text-blue-700'
           : 'border-slate-200 bg-white text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
@@ -189,7 +189,7 @@ function TextField({
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between gap-2">
-        <label htmlFor={name} className="block text-sm font-medium text-slate-700">
+        <label htmlFor={name} className="form-label block text-sm font-medium text-slate-700">
           {label}
         </label>
         {hint && (
@@ -221,13 +221,13 @@ function TextField({
         }
         placeholder={placeholder}
         className={[
-          'w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-medium shadow-sm outline-none transition',
+          'form-control text-sm font-medium',
           error
-            ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-            : 'border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
+            ? 'is-invalid'
+            : '',
         ].join(' ')}
       />
-      {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
+      {error && <div className="invalid-feedback d-block text-xs font-medium">{error}</div>}
     </div>
   )
 }
@@ -528,7 +528,7 @@ export default function PPh21Tahunan() {
               numeric
             />
             <div>
-              <label htmlFor="status_pegawai" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="status_pegawai" className="form-label mb-1.5 block text-sm font-medium text-slate-700">
                 Status Pegawai
               </label>
               <select
@@ -536,7 +536,7 @@ export default function PPh21Tahunan() {
                 name="status_pegawai"
                 value={statusPegawai}
                 onChange={(e) => setStatusPegawai(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="form-select text-sm font-medium"
               >
                 {STATUS_PEGAWAI_OPTIONS.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -548,7 +548,7 @@ export default function PPh21Tahunan() {
           {/* Status PTKP + pratinjau bruto */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="status_ptkp" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="status_ptkp" className="form-label mb-1.5 block text-sm font-medium text-slate-700">
                 Status PTKP <span className="text-red-500">*</span>
               </label>
               <select
@@ -565,10 +565,10 @@ export default function PPh21Tahunan() {
                 }}
                 aria-invalid={Boolean(errors.status_ptkp)}
                 className={[
-                  'w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-medium shadow-sm outline-none transition',
+                  'form-select text-sm font-medium',
                   errors.status_ptkp
-                    ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-                    : 'border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
+                    ? 'is-invalid'
+                    : '',
                 ].join(' ')}
               >
                 {PTKP_OPTIONS.map((o) => (
@@ -576,7 +576,7 @@ export default function PPh21Tahunan() {
                 ))}
               </select>
               {errors.status_ptkp && (
-                <p className="mt-1 text-xs font-medium text-red-600">{errors.status_ptkp}</p>
+                <div className="invalid-feedback d-block text-xs font-medium">{errors.status_ptkp}</div>
               )}
             </div>
             <div className="flex items-end">

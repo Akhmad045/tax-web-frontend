@@ -1,8 +1,8 @@
+import { Check, Loader2, Save } from 'lucide-react'
+
 /**
- * SimpanButton
- * ------------
  * Tombol "Simpan Data" untuk menyimpan hasil perhitungan ke database
- * (tabel riwayat di backend).
+ * (tabel riwayat di backend). Gaya: btn-success template.
  *
  * Props:
  *   onSimpan  : async () => void  — dipanggil saat diklik
@@ -23,16 +23,15 @@ export default function SimpanButton({
       type="button"
       onClick={onSimpan}
       disabled={tidakAktif}
-      className={[
-        'inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition',
-        tersimpan
-          ? 'bg-green-600 text-white'
-          : tidakAktif
-            ? 'cursor-not-allowed bg-slate-300 text-slate-500'
-            : 'bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]',
-      ].join(' ')}
+      className="btn btn-success d-inline-flex align-items-center gap-2"
     >
-      <span aria-hidden="true">{tersimpan ? '✓' : loading ? '⏳' : '💾'}</span>
+      {tersimpan ? (
+        <Check size={16} />
+      ) : loading ? (
+        <Loader2 size={16} className="animate-spin" />
+      ) : (
+        <Save size={16} />
+      )}
       <span>{tersimpan ? 'Tersimpan' : loading ? 'Menyimpan…' : 'Simpan Data'}</span>
     </button>
   )

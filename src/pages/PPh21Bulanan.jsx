@@ -293,7 +293,7 @@ export default function PPh21Bulanan() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* 1. Nama Karyawan */}
             <div>
-              <label htmlFor="nama_karyawan" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="nama_karyawan" className="form-label mb-1.5 block text-sm font-medium text-slate-700">
                 Nama Karyawan <span className="text-red-500">*</span>
               </label>
               <input
@@ -306,21 +306,21 @@ export default function PPh21Bulanan() {
                 placeholder="Mis. Budi Santoso"
                 aria-invalid={Boolean(errors.nama_karyawan)}
                 className={[
-                  'w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-medium shadow-sm outline-none transition',
+                  'form-control text-sm font-medium',
                   errors.nama_karyawan
-                    ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-                    : 'border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
+                    ? 'is-invalid'
+                    : '',
                 ].join(' ')}
               />
               {errors.nama_karyawan && (
-                <p className="mt-1 text-xs font-medium text-red-600">{errors.nama_karyawan}</p>
+                <div className="invalid-feedback d-block text-xs font-medium">{errors.nama_karyawan}</div>
               )}
             </div>
 
             {/* 2. NIK */}
             <div>
               <div className="mb-1.5 flex items-baseline justify-between">
-                <label htmlFor="nik" className="block text-sm font-medium text-slate-700">
+                <label htmlFor="nik" className="form-label block text-sm font-medium text-slate-700">
                   NIK <span className="text-red-500">*</span>
                 </label>
                 <span
@@ -344,20 +344,20 @@ export default function PPh21Bulanan() {
                 placeholder="16 digit angka"
                 aria-invalid={Boolean(errors.nik)}
                 className={[
-                  'w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-medium shadow-sm outline-none transition',
+                  'form-control text-sm font-medium',
                   errors.nik
-                    ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-                    : 'border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
+                    ? 'is-invalid'
+                    : '',
                 ].join(' ')}
               />
               {errors.nik && (
-                <p className="mt-1 text-xs font-medium text-red-600">{errors.nik}</p>
+                <div className="invalid-feedback d-block text-xs font-medium">{errors.nik}</div>
               )}
             </div>
 
             {/* 3. Status PTKP */}
             <div>
-              <label htmlFor="status_ptkp" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="status_ptkp" className="form-label mb-1.5 block text-sm font-medium text-slate-700">
                 Status PTKP <span className="text-red-500">*</span>
               </label>
               <select
@@ -367,10 +367,10 @@ export default function PPh21Bulanan() {
                 onChange={(e) => setField('status_ptkp')(e.target.value)}
                 aria-invalid={Boolean(errors.status_ptkp)}
                 className={[
-                  'w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-medium shadow-sm outline-none transition',
+                  'form-select text-sm font-medium',
                   errors.status_ptkp
-                    ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-                    : 'border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
+                    ? 'is-invalid'
+                    : '',
                 ].join(' ')}
               >
                 {PTKP_OPTIONS.map((o) => (
@@ -380,7 +380,7 @@ export default function PPh21Bulanan() {
                 ))}
               </select>
               {errors.status_ptkp && (
-                <p className="mt-1 text-xs font-medium text-red-600">{errors.status_ptkp}</p>
+                <div className="invalid-feedback d-block text-xs font-medium">{errors.status_ptkp}</div>
               )}
             </div>
 
@@ -436,7 +436,7 @@ export default function PPh21Bulanan() {
 
             {/* 9. Status Pegawai */}
             <div>
-              <label htmlFor="status_pegawai" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="status_pegawai" className="form-label mb-1.5 block text-sm font-medium text-slate-700">
                 Status Pegawai
               </label>
               <select
@@ -444,7 +444,7 @@ export default function PPh21Bulanan() {
                 name="status_pegawai"
                 value={form.status_pegawai}
                 onChange={(e) => setField('status_pegawai')(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="form-select text-sm font-medium"
               >
                 {STATUS_PEGAWAI_OPTIONS.map((s) => (
                   <option key={s} value={s}>

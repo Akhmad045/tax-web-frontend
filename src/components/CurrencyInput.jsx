@@ -30,11 +30,11 @@ export default function CurrencyInput({
 
   return (
     <div>
-      <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-700">
+      <label htmlFor={name} className="form-label mb-1.5 text-sm font-medium text-slate-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
-        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-sm font-medium text-slate-400">
+        <span className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-sm font-medium text-slate-400">
           Rp
         </span>
         <input
@@ -47,16 +47,17 @@ export default function CurrencyInput({
           onChange={handleChange}
           placeholder={placeholder}
           aria-invalid={hasError}
+          // form-control template (padding/border/radius/fokus khas
+          // Bootstrap); pl-10 memberi ruang awalan "Rp", text-right
+          // menjaga angka rata kanan seperti sebelumnya.
           className={[
-            'w-full rounded-xl border bg-white py-2.5 pl-10 pr-3 text-right text-sm font-medium shadow-sm outline-none transition',
-            hasError
-              ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-              : 'border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
+            'form-control pl-10 pr-3 text-right text-sm font-medium',
+            hasError ? 'is-invalid' : '',
           ].join(' ')}
         />
       </div>
       {hasError ? (
-        <p className="mt-1 text-xs font-medium text-red-600">{error}</p>
+        <div className="invalid-feedback d-block text-xs font-medium">{error}</div>
       ) : (
         hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>
       )}

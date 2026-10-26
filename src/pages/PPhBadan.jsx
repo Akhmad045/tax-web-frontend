@@ -227,7 +227,7 @@ export default function PPhBadan() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Identitas */}
             <div>
-              <label htmlFor="nama_wp" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="nama_wp" className="form-label mb-1.5 block text-sm font-medium text-slate-700">
                 Nama Wajib Pajak
               </label>
               <input
@@ -239,17 +239,17 @@ export default function PPhBadan() {
                 onChange={(e) => setField('nama_wp')(e.target.value)}
                 placeholder="Mis. PT Maju Bersama"
                 aria-invalid={Boolean(errors.nama_wp)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="form-control text-sm font-medium"
               />
               {errors.nama_wp && (
-                <p className="mt-1 text-xs font-medium text-red-600">{errors.nama_wp}</p>
+                <div className="invalid-feedback d-block text-xs font-medium">{errors.nama_wp}</div>
               )}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <div className="mb-1.5 flex items-baseline justify-between gap-2">
-                  <label htmlFor="npwp" className="block text-sm font-medium text-slate-700">
+                  <label htmlFor="npwp" className="form-label block text-sm font-medium text-slate-700">
                     NPWP Badan
                   </label>
                   <span
@@ -273,18 +273,18 @@ export default function PPhBadan() {
                   placeholder="16 digit angka"
                   aria-invalid={Boolean(errors.npwp)}
                   className={[
-                    'w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-medium shadow-sm outline-none transition',
+                    'form-control text-sm font-medium',
                     errors.npwp
-                      ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-                      : 'border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
+                      ? 'is-invalid'
+                      : '',
                   ].join(' ')}
                 />
                 {errors.npwp && (
-                  <p className="mt-1 text-xs font-medium text-red-600">{errors.npwp}</p>
+                  <div className="invalid-feedback d-block text-xs font-medium">{errors.npwp}</div>
                 )}
               </div>
               <div>
-                <label htmlFor="tahun_pajak" className="mb-1.5 block text-sm font-medium text-slate-700">
+                <label htmlFor="tahun_pajak" className="form-label mb-1.5 block text-sm font-medium text-slate-700">
                   Tahun Pajak
                 </label>
                 <input
@@ -296,7 +296,7 @@ export default function PPhBadan() {
                   value={form.tahun_pajak}
                   onChange={(e) => setField('tahun_pajak')(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
                   placeholder="2026"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="form-control text-sm font-medium"
                 />
               </div>
             </div>
